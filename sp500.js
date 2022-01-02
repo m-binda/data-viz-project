@@ -12,7 +12,7 @@ function SP500() {
 
     // Names for each axis.
     this.xAxisLabel = 'Months of 2020';
-    this.yAxisLabel = 'Stock value (average per company)';
+    this.yAxisLabel = 'Stock value USD (average per company)';
 
     this.colors = [];
 
@@ -152,10 +152,6 @@ function SP500() {
             }
 
         }
-
-        console.log(this.sector_value);
-        console.log(this.series);
-
     };
 
     this.destroy = function () {
