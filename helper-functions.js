@@ -20,7 +20,7 @@ function mean(data) {
   return total / data.length;
 }
 
-function sliceRowNumbers (row, start=0, end) {
+function sliceRowNumbers(row, start = 0, end) {
   var rowData = [];
 
   if (!end) {
@@ -35,7 +35,7 @@ function sliceRowNumbers (row, start=0, end) {
   return rowData;
 }
 
-function stringsToNumbers (array) {
+function stringsToNumbers(array) {
   return array.map(Number);
 }
 
@@ -43,20 +43,20 @@ function stringsToNumbers (array) {
 // Plotting helper functions
 // --------------------------------------------------------------------
 
-function drawAxis(layout, colour=0) {
+function drawAxis(layout, colour = 0) {
   stroke(color(colour));
 
   // x-axis
   line(layout.leftMargin,
-       layout.bottomMargin,
-       layout.rightMargin,
-       layout.bottomMargin);
+    layout.bottomMargin,
+    layout.rightMargin,
+    layout.bottomMargin);
 
   // y-axis
   line(layout.leftMargin,
-       layout.topMargin,
-       layout.leftMargin,
-       layout.bottomMargin);
+    layout.topMargin,
+    layout.leftMargin,
+    layout.bottomMargin);
 }
 
 function drawAxisLabels(xLabel, yLabel, layout) {
@@ -66,24 +66,24 @@ function drawAxisLabels(xLabel, yLabel, layout) {
 
   // Draw x-axis label.
   text(xLabel,
-       (layout.plotWidth() / 2) + layout.leftMargin,
-       layout.bottomMargin + (layout.marginSize * 1.5));
+    (layout.plotWidth() / 2) + layout.leftMargin,
+    layout.bottomMargin + (layout.marginSize * 1.5));
 
   // Draw y-axis label.
   push();
   translate(layout.leftMargin - (layout.marginSize * 1.5),
-            layout.bottomMargin / 2);
+    layout.bottomMargin / 2);
   rotate(- PI / 2);
   text(yLabel, 0, 0);
   pop();
 }
 
 function drawYAxisTickLabels(min, max, layout, mapFunction,
-                             decimalPlaces) {
+  decimalPlaces) {
   // Map function must be passed with .bind(this).
   var range = max - min;
   var yTickStep = range / layout.numYTickLabels;
-
+  strokeWeight(1)
   fill(0);
   noStroke();
   textAlign('right', 'center');
@@ -95,8 +95,8 @@ function drawYAxisTickLabels(min, max, layout, mapFunction,
 
     // Add tick label.
     text(value.toFixed(decimalPlaces),
-         layout.leftMargin - layout.pad,
-         y);
+      layout.leftMargin - layout.pad,
+      y);
 
     if (layout.grid) {
       // Add grid line.
@@ -116,15 +116,16 @@ function drawXAxisTickLabel(value, layout, mapFunction) {
 
   // Add tick label.
   text(value,
-       x,
-       layout.bottomMargin + layout.marginSize / 2);
+    x,
+    layout.bottomMargin + layout.marginSize / 2);
 
   if (layout.grid) {
     // Add grid line.
     stroke(220);
+    strokeWeight(1)
     line(x,
-         layout.topMargin,
-         x,
-         layout.bottomMargin);
+      layout.topMargin,
+      x,
+      layout.bottomMargin);
   }
 }
