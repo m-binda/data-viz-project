@@ -1,0 +1,25 @@
+gender,job,job_title,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017
+Females,managers,Manager,26.14,28.1,28.6,36.43,32.68,33.3,34.41,35.22,36.24,37.26,42.63,42.12,44.35,46.02
+Females,professionals,Professionals,29.02,30,30.56,31.93,32.93,34.72,35.52,36.48,37.72,38.95,44.13,44.75,45.17,47.04
+Females,techniciansandtradesworkers,Technicians and trades workers,17.9,18.86,19.64,20.98,20.3,20.19,22.86,23.19,23.95,23.9,27.86,27.5,26.28,28.3
+Females,communityandalserviceworkers,Community and service workers,18.01,18.2,18.84,19.85,20.97,21,21.97,23.25,23.52,24.5,25.01,26.87,26.54,27.84
+Females,clericalandadministrativeworkers,Clerical and administrative workers,19.98,20.95,21.73,23.27,23.67,23.81,25.74,26.85,28.35,28.38,31.52,31.68,32.35,33.54
+Females,salesworkers,Sales workers,14.79,15.39,16.19,16.78,17.44,18.02,19.15,19.87,20.82,21.61,22.28,22.99,23.39,26.11
+Females,machineryoperatorsanddrivers,Machinery operators and drivers,16.27,21.49,17.37,18.04,20.27,21.46,22.74,22.92,24.46,25.02,29.84,31.91,29.73,30.07
+Females,labourers,Labourers,16.48,16.71,16.32,17.54,17.27,17.9,19.18,19.82,20.99,21.75,22.64,23.66,24.19,24.9
+Males,managers,Manager,33.02,33.13,35.16,38.85,38.34,41.67,41.28,43.87,44.24,44.85,49.55,49.02,49.77,52.51
+Males,professionals,Professionals,34.03,34.2,34.34,38.85,39.4,40.12,41.49,45.78,45.24,45.03,50.45,51.05,49.49,52.91
+Males,techniciansandtradesworkers,Technicians and trades workers,22.15,21.87,22.64,23.97,24.81,26.62,27.95,29.26,30.94,30.82,31.95,33.27,31.97,34.25
+Males,communityandalserviceworkers,Community and service workers,21.18,22.52,22.74,24.56,31.35,25.1,26.99,26.41,29.03,29.2,31.96,30.74,33.35,32.63
+Males,clericalandadministrativeworkers,Clerical and administrative workers,23.19,23.94,26.15,28.52,28.04,28.25,30.69,32.77,32.9,33.88,35.85,35.72,37.77,39.4
+Males,salesworkers,Sales workers,18.51,19.01,19.99,20.82,22.58,21.6,23.22,23.99,24.49,24.55,25.99,26.89,29.62,29.28
+Males,machineryoperatorsanddrivers,Machinery operators and drivers,20.92,21.04,21.36,23.06,23.7,25.44,27.25,27.16,28.88,29.83,30.48,30.92,29.65,33.12
+Males,labourers,Labourers,17.21,17.85,18.18,19.68,19.79,19.96,21.69,22.16,24.18,24.25,25.22,24.73,25.64,27.28
+Persons,managers,Manager,30.6,31.37,32.82,37.95,36.24,38.57,38.73,40.62,41.28,41.99,46.88,46.21,47.66,49.8
+Persons,professionals,Professionals,31.22,31.91,32.28,35.01,35.84,37.1,38.14,40.65,41.07,41.66,46.92,47.53,47.03,49.56
+Persons,techniciansandtradesworkers,Technicians and trades workers,21.58,21.42,22.18,23.52,24.19,25.68,27.23,28.42,29.9,29.81,31.34,32.39,31.04,33.36
+Persons,communityandalserviceworkers,Community and service workers,19.03,19.6,20.04,21.32,24.25,22.25,23.5,24.26,25.25,25.88,27.16,28.11,28.68,29.28
+Persons,clericalandadministrativeworkers,Clerical and administrative workers,20.8,21.71,22.82,24.61,24.76,24.93,27.04,28.31,29.47,29.84,32.56,32.69,33.76,35.01
+Persons,alesworkers,Sales workers,16.13,16.7,17.57,18.28,19.34,19.38,20.58,21.41,22.16,22.67,23.59,24.38,25.79,27.31
+Persons,machineryoperatorsanddrivers,Machinery operators and drivers,20.39,21.09,21,22.55,23.33,25.05,26.82,26.74,28.52,29.36,30.42,31.02,29.66,32.84
+Persons,labourers,Labourers,16.95,17.44,17.48,18.88,18.85,19.21,20.83,21.32,22.99,23.32,24.29,24.36,25.14,26.44
