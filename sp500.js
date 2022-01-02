@@ -11,11 +11,10 @@ function SP500() {
     this.title = 'SP 500 during COVID';
 
     // Names for each axis.
-    this.xAxisLabel = 'year';
-    this.yAxisLabel = 'Stock value % (100% for January 2020)';
+    this.xAxisLabel = 'Months of 2020';
+    this.yAxisLabel = 'Stock value (average per company)';
 
     this.colors = [];
-    this.colors2 = [];
 
     var marginSize = 35;
 
@@ -90,23 +89,18 @@ function SP500() {
         // Font defaults.
         textSize(16);
 
-        // Get min and max years:
-        this.endYear = 2016;
-        this.startYear = 2001;
+        // Get min and max months:
+        this.endMonth = 12;
+        this.startMonth = 1;
         this.minY = 999;
         this.maxY = 0;
         this.series = {};
-
-        // New variables
-        this.months = ["Jan", "Feb", "Mar", "Apr", "May",
-            "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
         // Keep stock value per sector per date
         this.sector_value = {};
 
         // Number of companies per sector for average
         this.sector_quantity = {};
-
 
         // Get stock values for each sector per day
         for (let i = 0; i < this.stock_data.getRowCount(); i++) {
@@ -121,7 +115,7 @@ function SP500() {
                     // Add sector
                     if (this.sector_value[company_row.getString(4)] == undefined) {
                         this.sector_value[company_row.getString(4)] = {};
-                        this.colors2.push(color(random(0, 255), random(0, 255), random(0, 255)));
+                        this.colors.push(color(random(0, 255), random(0, 255), random(0, 255)));
 
                         // Get number of companies per sector
                         this.sector_quantity[company_row.getString(4)] = 1 / 12;
@@ -156,9 +150,21 @@ function SP500() {
             }
 
         }
-        console.log(this.sector_value);
-        console.log(this.colors2);
 
+
+        // Convert objects in object into array in object
+        for (const sector in this.sector_value) {
+
+            this.series[sector] = []
+
+            for (const date in this.sector_value[sector]) {
+                this.series[sector].push(this.sector_value[sector][date]);
+            }
+
+        }
+
+        console.log(this.sector_value);
+        console.log(this.series);
 
         //loop over all the rows
         for (var i = 0; i < this.data.getRowCount(); i++) {
@@ -208,29 +214,28 @@ function SP500() {
             this.yAxisLabel,
             this.layout);
 
-        // Plot all pay gaps between startYear and endYear using the width
+        // Plot all pay gaps between startMonth and endMonth using the width
         // of the canvas minus margins.
 
-        var numYears = this.endYear - this.startYear;
+        var numMonths = this.endMonth - this.startMonth + 1;
 
-        for (var i = 0; i < numYears; i++) {
+        for (var i = 0; i < numMonths; i++) {
             // The number of x-axis labels to skip so that only
             // numXTickLabels are drawn.
-            var xLabelSkip = ceil(numYears / this.layout.numXTickLabels);
+            // var xLabelSkip = ceil(numMonths / this.layout.numXTickLabels);
 
-            y = this.startYear + i;
-            // Draw the tick label marking the start of the previous year.
-            if (i % xLabelSkip == 0) {
-                drawXAxisTickLabel(y, this.layout,
-                    this.mapYearToWidth.bind(this));
-            }
+            y = this.startMonth + i;
+            drawXAxisTickLabel(y, this.layout,
+                this.mapMonthToWidth.bind(this));
+            // Draw the tick label marking the start of the previous month.
+            // if (i % xLabelSkip == 0) {
+
+            // }
         }
 
 
 
-        var legend = Object.keys(this.series);
-
-
+        let legend = Object.keys(this.series);
 
         for (var j = 0; j < legend.length; j++) {
 
@@ -241,20 +246,20 @@ function SP500() {
             for (var i = 0; i < this.series[legend[j]].length; i++) {
 
 
-                // Create an object to store data for the current year.
+                // Create an object to store data for the current month.
                 var current = {
                     // Convert strings to numbers.
-                    'year': this.startYear + i,
+                    'month': this.startMonth + i,
                     'percentage': this.series[legend[j]][i]
                 };
 
                 if (previous != null) {
-                    // Draw line segment connecting previous year to current
-                    // year pay gap.
+                    // Draw line segment connecting previous month to current
+                    // month pay gap.
                     stroke(this.colors[j]);
-                    line(this.mapYearToWidth(previous.year),
+                    line(this.mapMonthToWidth(previous.month),
                         this.mapYToHeight(previous.percentage),
-                        this.mapYearToWidth(current.year),
+                        this.mapMonthToWidth(current.month),
                         this.mapYToHeight(current.percentage));
 
 
@@ -267,7 +272,7 @@ function SP500() {
                     pop();
                 }
 
-                // Assign current year to previous year so that it is available
+                // Assign current month to previous month so that it is available
                 // during the next iteration of this loop to give us the start
                 // position of the next line segment.
                 previous = current;
@@ -285,10 +290,10 @@ function SP500() {
             this.layout.topMargin - (this.layout.marginSize / 2));
     };
 
-    this.mapYearToWidth = function (value) {
+    this.mapMonthToWidth = function (value) {
         return map(value,
-            this.startYear,
-            this.endYear,
+            this.startMonth,
+            this.endMonth,
             this.layout.leftMargin,   // Draw left-to-right from margin.
             this.layout.rightMargin);
     };
