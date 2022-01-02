@@ -16,7 +16,7 @@ function SP500() {
 
     this.colors = [];
 
-    var marginSize = 35;
+    let marginSize = 35;
 
     // Layout object to store all common plot layout parameters and
     // methods.
@@ -28,7 +28,7 @@ function SP500() {
         leftMargin: marginSize * 2,
         rightMargin: width - marginSize,
         topMargin: marginSize,
-        bottomMargin: height - marginSize * 2,
+        bottomMargin: height - marginSize * 6,
         pad: 5,
 
         plotWidth: function () {
@@ -54,7 +54,7 @@ function SP500() {
     // Preload the data. This function is called automatically by the
     // gallery when a visualisation is added.
     this.preload = function () {
-        var self = this;
+        let self = this;
 
         // Preloads the stock value data
         this.stock_data = loadTable(
@@ -73,16 +73,6 @@ function SP500() {
             function (table) {
                 self.loaded = true;
             });
-
-        this.data = loadTable(
-            './data/food/household-nutrients-0117.csv', 'csv', 'header',
-            // Callback function to set the value
-            // this.loaded to true.
-            function (table) {
-                self.loaded = true;
-            });
-
-
     };
 
     this.setup = function () {
@@ -92,8 +82,8 @@ function SP500() {
         // Get min and max months:
         this.endMonth = 12;
         this.startMonth = 1;
-        this.minY = 999;
-        this.maxY = 0;
+        this.minY = 0;
+        this.maxY = 300;
         this.series = {};
 
         // Keep stock value per sector per date
@@ -145,8 +135,8 @@ function SP500() {
         for (const sector in this.sector_value) {
             for (const date in this.sector_value[sector]) {
                 this.sector_value[sector][date] /= this.sector_quantity[sector];
-                this.minY = min(this.minY, this.sector_value[sector][date]);
-                this.maxY = max(this.maxY, this.sector_value[sector][date]);
+                // this.minY = min(this.minY, this.sector_value[sector][date]);
+                // this.maxY = max(this.maxY, this.sector_value[sector][date]);
             }
 
         }
@@ -166,25 +156,6 @@ function SP500() {
         console.log(this.sector_value);
         console.log(this.series);
 
-        //loop over all the rows
-        for (var i = 0; i < this.data.getRowCount(); i++) {
-            var row = this.data.getRow(i);
-
-            //if the series isn't there already add a new array
-            if (this.series[row.getString(0)] == undefined) {
-                this.series[row.getString(0)] = [];
-                this.colors.push(color(random(0, 255), random(0, 255), random(0, 255)));
-            }
-
-            for (var j = 1; j < this.data.getColumnCount(); j++) {
-                // this.minY = min(this.minY, row.getNum(j));
-                // this.maxY = max(this.maxY, row.getNum(j));
-                // we are assuming that the data is in chronological order
-                this.series[row.getString(0)].push(row.getNum(j));
-            }
-
-        }
-        console.log(this.series);
     };
 
     this.destroy = function () {
@@ -214,15 +185,14 @@ function SP500() {
             this.yAxisLabel,
             this.layout);
 
-        // Plot all pay gaps between startMonth and endMonth using the width
+        // Plot all stock values between startMonth and endMonth using the width
         // of the canvas minus margins.
+        let numMonths = this.endMonth - this.startMonth + 1;
 
-        var numMonths = this.endMonth - this.startMonth + 1;
-
-        for (var i = 0; i < numMonths; i++) {
+        for (let i = 0; i < numMonths; i++) {
             // The number of x-axis labels to skip so that only
             // numXTickLabels are drawn.
-            // var xLabelSkip = ceil(numMonths / this.layout.numXTickLabels);
+            // let xLabelSkip = ceil(numMonths / this.layout.numXTickLabels);
 
             y = this.startMonth + i;
             drawXAxisTickLabel(y, this.layout,
@@ -237,17 +207,17 @@ function SP500() {
 
         let legend = Object.keys(this.series);
 
-        for (var j = 0; j < legend.length; j++) {
+        for (let j = 0; j < legend.length; j++) {
 
 
-            var previous = null;
+            let previous = null;
             // Loop over all rows and draw a line from the previous value to
             // the current.
-            for (var i = 0; i < this.series[legend[j]].length; i++) {
+            for (let i = 0; i < this.series[legend[j]].length; i++) {
 
 
                 // Create an object to store data for the current month.
-                var current = {
+                let current = {
                     // Convert strings to numbers.
                     'month': this.startMonth + i,
                     'percentage': this.series[legend[j]][i]
@@ -255,8 +225,9 @@ function SP500() {
 
                 if (previous != null) {
                     // Draw line segment connecting previous month to current
-                    // month pay gap.
+                    // month stock value.
                     stroke(this.colors[j]);
+                    strokeWeight(2);
                     line(this.mapMonthToWidth(previous.month),
                         this.mapYToHeight(previous.percentage),
                         this.mapMonthToWidth(current.month),
@@ -264,19 +235,37 @@ function SP500() {
 
 
                 }
-                else {
-                    push();
-                    textAlign(LEFT);
-                    noStroke();
-                    text(legend[j], 100, this.mapYToHeight(current.percentage) - 20)
-                    pop();
-                }
 
                 // Assign current month to previous month so that it is available
                 // during the next iteration of this loop to give us the start
                 // position of the next line segment.
                 previous = current;
             }
+
+
+
+
+            // To implement legend at the bottom of the graph with
+            // text and rect.
+            strokeWeight(1);
+            textAlign(LEFT);
+            if (j % 2 == 0) {
+                noStroke();
+                fill(0);
+                text(legend[j], 90 + j * 80, 600);
+                fill(this.colors[j])
+                rect(75 + j * 80, 592, 10, 10);
+            }
+            else {
+                noStroke();
+                fill(0);
+                text(legend[j], 90 + (j - 1) * 80, 570);
+                fill(this.colors[j])
+                rect(75 + (j - 1) * 80, 562, 10, 10);
+            }
+
+
+
         }
     };
 
@@ -302,7 +291,7 @@ function SP500() {
         return map(value,
             this.minY,
             this.maxY,
-            this.layout.bottomMargin, // Smaller pay gap at bottom.
-            this.layout.topMargin);   // Bigger pay gap at top.
+            this.layout.bottomMargin,
+            this.layout.topMargin);
     };
 }
