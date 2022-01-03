@@ -70,13 +70,14 @@ function AppleStock() {
         // Font defaults.
         textSize(16);
 
-        // Set min and max years: assumes data is sorted by date.
+        // Set min and max months: assumes data is sorted by date.
         this.startMonth = this.data.getNum(0, 'month');
         this.endMonth = this.data.getNum(this.data.getRowCount() - 1, 'month');
 
-        // Find min and max pay gap for mapping to canvas height.
-        this.minStockValue = min(this.data.getColumn('low'));         // Pay equality (zero pay gap).
-        this.maxStockValue = max(this.data.getColumn('high'));
+        // Find min and max stock values for mapping to canvas height.
+        this.minStockValue = (round(min(this.data.getColumn('low')) / 10) * 10);
+
+        this.maxStockValue = (round(max(this.data.getColumn('high')) / 10) * 10);
 
         // Get an object with all data
         this.series = [];
@@ -120,17 +121,16 @@ function AppleStock() {
             this.layout);
 
 
-        // Plot the graph
-        let previous;
-        let numMonth = this.endMonth - this.startMonth;
-
+        // Plot the line of the graph
         for (let i = 0; i < this.series.length; i++) {
 
+            // Set key stock values for each month
             let close_value = this.series[i][1];
             let open_value = this.series[i][2];
             let high_value = this.series[i][3];
             let lowest_value = this.series[i][4];
 
+            // Map y position of each month
             let current_month = this.mapMonthToWidth(this.series[i][0]);
 
             drawXAxisTickLabel(this.series[i][0], this.layout, this.mapMonthToWidth.bind(this));
@@ -140,9 +140,7 @@ function AppleStock() {
             high_value = this.mapStockValueToHeight(high_value);
             lowest_value = this.mapStockValueToHeight(lowest_value);
 
-            strokeWeight(4);
-
-
+            strokeWeight(2);
             if (open_value > close_value) {
                 stroke(255, 0, 0);
             }
