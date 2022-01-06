@@ -89,12 +89,9 @@ function AppleStock() {
             this.series.push(row);
         }
 
-        console.log(this.series);
-        console.log(this.series[0][0]);
     };
 
-    this.destroy = function () {
-    };
+    this.destroy = function () {};
 
     this.draw = function () {
         if (!this.loaded) {
@@ -143,8 +140,7 @@ function AppleStock() {
             strokeWeight(2);
             if (open_value > close_value) {
                 stroke(255, 0, 0);
-            }
-            else {
+            } else {
                 stroke(0, 0, 255);
             }
 
@@ -175,7 +171,7 @@ function AppleStock() {
         return map(value,
             this.startMonth,
             this.endMonth,
-            this.layout.leftMargin,   // Draw left-to-right from margin.
+            this.layout.leftMargin, // Draw left-to-right from margin.
             this.layout.rightMargin);
     };
 
@@ -184,6 +180,6 @@ function AppleStock() {
             this.minStockValue,
             this.maxStockValue,
             this.layout.bottomMargin, // Smaller pay gap at bottom.
-            this.layout.topMargin);   // Bigger pay gap at top.
+            this.layout.topMargin); // Bigger pay gap at top.
     };
 }

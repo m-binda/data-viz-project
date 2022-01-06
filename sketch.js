@@ -1,4 +1,3 @@
-
 // Global variable to store the gallery object. The gallery object is
 // a container for all the visualisations.
 var gallery;
@@ -20,6 +19,7 @@ function setup() {
   gallery.addVisual(new ClimateChange());
   gallery.addVisual(new SP500());
   gallery.addVisual(new AppleStock());
+  gallery.addVisual(new Kagi());
 }
 
 function draw() {
