@@ -190,12 +190,39 @@ function Kagi() {
             this.layout, this.mapStockToHeight.bind(this));
 
 
+        // Login to draw the graph
         let rMin = this.kagiValues[0][2];
         let rMax = this.kagiValues[0][2];
+        let changeMin = 0;
+        let changeMax = 0;
 
+        strokeWeight(4);
 
-        // Draw the subsequent lines (above must add for the first later)
-        // I must adjust for the color to change mid line later
+        // Draws the line for the first two values.
+        if (this.kagiValues[1][2] < rMin) {
+            stroke(255, 0, 0);
+            changeMin++;
+            changeMax = 0;
+            rMin = this.kagiValues[1][2];
+
+        } else if (this.kagiValues[1][2] > rMax) {
+            stroke(0, 155, 44);
+            changeMax++;
+            changeMin = 0;
+            rMax = this.kagiValues[1][2];
+        }
+
+        line(this.layout.leftMargin,
+            this.mapStockToHeight(this.kagiValues[0][2]),
+            this.layout.leftMargin,
+            this.mapStockToHeight(this.kagiValues[1][2]));
+
+        line(this.layout.leftMargin,
+            this.mapStockToHeight(this.kagiValues[1][2]),
+            this.layout.leftMargin + (this.widthProportion),
+            this.mapStockToHeight(this.kagiValues[1][2]));
+
+        // Draw the subsequent lines
         for (let i = 1; i < this.kagiValues.length - 1; i++) {
             let currentX = this.layout.leftMargin + (this.widthProportion * i);
             let nextX = this.layout.leftMargin + (this.widthProportion * (i + 1));
@@ -203,16 +230,21 @@ function Kagi() {
             let currentValue = this.mapStockToHeight(this.kagiValues[i][2]);
             let nextValue = this.mapStockToHeight(this.kagiValues[i + 1][2]);
 
-
-            if (this.kagiValues[i + 1][2] < rMin) {
-                strokeWeight(2);
+            if (this.kagiValues[i + 1][2] <= rMin) {
                 stroke(255, 0, 0);
-            } else if (this.kagiValues[i + 1][2] > rMax) {
-                strokeWeight(5);
+                changeMin++;
+                changeMax = 0;
+            } else if (this.kagiValues[i + 1][2] >= rMax) {
                 stroke(0, 155, 44);
+                changeMax++;
+                changeMin = 0;
             }
 
+            // console.log(i + " " + this.kagiValues[i][2]);
+            // console.log("Max is " + changeMax);
+            // console.log("Min is " + changeMin);
 
+            // Drwas the main lines connecting the values
             line(currentX, currentValue,
                 currentX, nextValue);
 
@@ -220,12 +252,31 @@ function Kagi() {
                 nextX, nextValue);
 
 
+            // Changes the current valid valley or peak
             if (this.kagiValues[i][2] > this.kagiValues[i - 1][2]) {
                 rMin = this.kagiValues[i - 1][2];
                 rMax = this.kagiValues[i][2];
             } else {
                 rMin = this.kagiValues[i][2];
                 rMax = this.kagiValues[i - 1][2];
+            }
+
+            // Logic to change the line in the correct point of the Kagi chart
+            // Currently not working well.
+            if (changeMin === 1) {
+                stroke(0, 155, 44);
+                line(currentX, currentValue,
+                    currentX, this.mapStockToHeight(rMin));
+                stroke(255, 0, 0);
+                line(currentX, this.mapStockToHeight(rMin),
+                    currentX, nextValue);
+            } else if (changeMax === 1) {
+                stroke(255, 0, 0);
+                line(currentX, currentValue,
+                    currentX, this.mapStockToHeight(rMax));
+                stroke(0, 155, 44);
+                line(currentX, this.mapStockToHeight(rMax),
+                    currentX, nextValue);
             }
         }
 
@@ -262,6 +313,7 @@ function Kagi() {
         // Map function must be passed with .bind(this).
         // var x = this.mapXToWidthTemp(value);
 
+        let textAdjust = -5;
         for (let i = 0; i < this.kagiValues.length; i++) {
             let x = this.layout.leftMargin + (this.widthProportion * i);
 
@@ -271,10 +323,17 @@ function Kagi() {
 
             // rotate(180);
 
-            // Add tick label.
-            text(this.kagiValues[i][1],
-                x,
-                this.layout.bottomMargin + this.layout.marginSize / 2);
+            // Add tick label, skipping one every three.
+            if (i % 3 !== 0) {
+                text(this.kagiValues[i][1],
+                    x + textAdjust,
+                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3));
+                stroke(155);
+                line(x,
+                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3) - 10, x, this.layout.bottomMargin)
+                textAdjust *= -1;
+            }
+
 
             if (this.layout.grid) {
                 // Add grid line.
