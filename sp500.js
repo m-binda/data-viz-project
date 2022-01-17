@@ -109,8 +109,7 @@ function SP500() {
 
                         // Get number of companies per sector
                         this.sector_quantity[company_row.getString(4)] = 1 / 12;
-                    }
-                    else {
+                    } else {
                         this.sector_quantity[company_row.getString(4)] += (1 / 12);
                     }
 
@@ -152,10 +151,13 @@ function SP500() {
             }
 
         }
+
+        console.log(this.series);
+
+        console.log(this.sector_value);
     };
 
-    this.destroy = function () {
-    };
+    this.destroy = function () {};
 
     this.draw = function () {
         if (!this.loaded) {
@@ -251,8 +253,7 @@ function SP500() {
                 text(legend[j], 90 + j * 80, 600);
                 fill(this.colors[j])
                 rect(75 + j * 80, 592, 10, 10);
-            }
-            else {
+            } else {
                 noStroke();
                 fill(0);
                 text(legend[j], 90 + (j - 1) * 80, 570);
@@ -279,7 +280,7 @@ function SP500() {
         return map(value,
             this.startMonth,
             this.endMonth,
-            this.layout.leftMargin,   // Draw left-to-right from margin.
+            this.layout.leftMargin, // Draw left-to-right from margin.
             this.layout.rightMargin);
     };
 

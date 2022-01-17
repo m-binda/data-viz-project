@@ -138,7 +138,7 @@ function AppleStock() {
             lowest_value = this.mapStockValueToHeight(lowest_value);
 
             strokeWeight(2);
-            if (open_value > close_value) {
+            if (open_value < close_value) {
                 stroke(255, 0, 0);
             } else {
                 stroke(0, 0, 255);
