@@ -151,10 +151,6 @@ function SP500() {
             }
 
         }
-
-        console.log(this.series);
-
-        console.log(this.sector_value);
     };
 
     this.destroy = function () {};
