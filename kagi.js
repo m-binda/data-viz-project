@@ -9,10 +9,8 @@ function Kagi() {
     // Title to display above the plot.
     this.title = 'Amazon stock analysis with Kagi chart';
 
-
     // Private variables
     let marginSize = 35;
-
 
     // Layout object to store all common plot layout parameters and
     // methods.
@@ -55,7 +53,6 @@ function Kagi() {
                 self.loaded = true;
             });
 
-
     };
 
     // Initiate variables for the series and min and max values for the
@@ -65,16 +62,13 @@ function Kagi() {
     this.maxStockValue = 0;
 
     this.dateRange = {
-        min: 366,
+        min: 365,
         max: 0,
     };
 
-    // Initiate the value for the minimum percentage variation to alter
-    // the line trend in the Kagi chart
-    this.priceVariation = 1.02;
-
-    // Initiate variable to be used in the Kagi chart}
-    this.kagiValues = [];
+    // ??? It seems this is not needed
+    // Initiate variable to be used in the Kagi chart
+    // this.kagiValues = [];
 
     this.setup = function () {
 
@@ -97,67 +91,79 @@ function Kagi() {
             this.dateRange.max = max(this.dateRange.max, dayInYear);
         }
 
-
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
         // percentage.
 
-        // Empty the array and adds first value
-        this.kagiValues = [];
-        this.kagiValues.push(this.series[0]);
-        this.kSecPos = 0; // Identify the position in series of the second 
-        // value to be added in kagi
+        // Initiate the value for the minimum percentage variation to alter
+        // the line trend in the Kagi chart
+        this.priceVar = 1.02;
 
-        // Adds second value to based on the minimun variation
+        // Initiate the array for the drawing of the Kagi chart
+        this.kagiValues = [];
+
+        // Adds the first and second value to calculate the trend later
+        // Adds the first value
+        this.kagiValues.push(this.series[0]);
+
+        // Adds second value based on the minimun variation
         for (let i = 0; i < this.series.length; i++) {
-            let kLen = this.kagiValues.length
+            let l = this.kagiValues.length
             if (
-                this.series[i][2] > (this.kagiValues[kLen - 1][2] * this.priceVariation) ||
-                this.series[i][2] < (this.kagiValues[kLen - 1][2] / this.priceVariation)
+                this.series[i][2] > (this.kagiValues[l - 1][2] * this.priceVar) ||
+                this.series[i][2] < (this.kagiValues[l - 1][2] * (2 - this.priceVar))
             ) {
                 this.kagiValues.push(this.series[i]);
-                this.kSecPos = i + 1; // Adjust position for next loop
+                this.kNextPos = i + 1; // Adjust position for next loop
                 break
             }
         }
 
-        // Adds subsequent values according to breaks in trend.
-        for (let i = this.kSecPos; i < this.series.length - 1; i++) {
+        // Adds subsequent values according to changes in trend.
+        for (let i = this.kNextPos; i < this.series.length; i++) {
 
-            let kLen = this.kagiValues.length;
+            let l = this.kagiValues.length;
 
-            if (this.kagiValues[kLen - 2][2] < this.kagiValues[kLen - 1][2]) {
-                if (this.kagiValues[kLen - 1][2] < this.series[i][2]) {
-                    this.kagiValues[kLen - 1] = this.series[i];
-                } else if (this.kagiValues[kLen - 1][2] > this.series[i][2] * this.priceVariation) {
+            // If the current trend is downwards
+            if (this.kagiValues[l - 2][2] < this.kagiValues[l - 1][2]) {
+                // Replaces the current minimum value
+                if (this.kagiValues[l - 1][2] < this.series[i][2]) {
+                    this.kagiValues[l - 1] = this.series[i];
+                }
+                // Adds new value if trend changes
+                else if (this.kagiValues[l - 1][2] * (2 - this.priceVar) > this.series[i][2]) {
                     this.kagiValues.push(this.series[i]);
                 }
-            } else {
-                if (this.kagiValues[kLen - 1][2] > this.series[i][2]) {
-                    this.kagiValues[kLen - 1] = this.series[i];
-                } else if (this.kagiValues[kLen - 1][2] < this.series[i][2] * this.priceVariation) {
+            }
+            // If the current trend is upwards
+            else {
+                // Replaces the current maximum value
+                if (this.kagiValues[l - 1][2] > this.series[i][2]) {
+                    this.kagiValues[l - 1] = this.series[i];
+                }
+                // Adds new value if trend changes
+                else if (this.kagiValues[l - 1][2] * this.priceVar < this.series[i][2]) {
                     this.kagiValues.push(this.series[i]);
                 }
             }
-
         }
 
-        // Add last value.
-        let kLen = this.kagiValues.length;
-        let sLen = this.series.length;
-        if (this.kagiValues[kLen - 2][2] < this.kagiValues[kLen - 1][2]) {
-            if (this.kagiValues[kLen - 1][2] < this.series[sLen - 1][2]) {
-                this.kagiValues[kLen - 1] = this.series[sLen - 1];
-            } else if (this.kagiValues[kLen - 1][2] > this.series[sLen - 1][2] * this.priceVariation) {
-                this.kagiValues.push(this.series[sLen - 1]);
-            }
-        } else {
-            if (this.kagiValues[kLen - 1][2] > this.series[sLen - 1][2]) {
-                this.kagiValues[kLen - 1] = this.series[sLen - 1];
-            } else if (this.kagiValues[kLen - 1][2] < this.series[sLen - 1][2] * this.priceVariation) {
-                this.kagiValues.push(this.series[sLen - 1]);
-            }
-        }
+        // // Add last value.
+        // let l = this.kagiValues.length;
+        // let sLen = this.series.length;
+        // if (this.kagiValues[l - 2][2] < this.kagiValues[l - 1][2]) {
+        //     if (this.kagiValues[l - 1][2] < this.series[sLen - 1][2]) {
+        //         this.kagiValues[l - 1] = this.series[sLen - 1];
+        //     } else if (this.kagiValues[l - 1][2] > this.series[sLen - 1][2] * this.priceVar) {
+        //         this.kagiValues.push(this.series[sLen - 1]);
+        //     }
+        // } else {
+        //     if (this.kagiValues[l - 1][2] > this.series[sLen - 1][2]) {
+        //         this.kagiValues[l - 1] = this.series[sLen - 1];
+        //     } else if (this.kagiValues[l - 1][2] < this.series[sLen - 1][2] * this.priceVar) {
+        //         this.kagiValues.push(this.series[sLen - 1]);
+        //     }
+        // }
 
         console.log(this.kagiValues);
 
@@ -240,11 +246,7 @@ function Kagi() {
                 changeMin = 0;
             }
 
-            // console.log(i + " " + this.kagiValues[i][2]);
-            // console.log("Max is " + changeMax);
-            // console.log("Min is " + changeMin);
-
-            // Drwas the main lines connecting the values
+            // Draws the main lines connecting the values
             line(currentX, currentValue,
                 currentX, nextValue);
 
