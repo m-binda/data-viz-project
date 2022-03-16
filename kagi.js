@@ -97,7 +97,7 @@ function Kagi() {
 
         // Initiate the value for the minimum percentage variation to alter
         // the line trend in the Kagi chart
-        this.priceVar = 1.02;
+        this.priceVar = 1.01;
 
         // Initiate the array for the drawing of the Kagi chart
         this.kagiValues = [];
@@ -196,33 +196,39 @@ function Kagi() {
             this.layout, this.mapStockToHeight.bind(this));
 
 
-        // Login to draw the graph
+        // Logic to draw the graph
         let rMin = this.kagiValues[0][2];
         let rMax = this.kagiValues[0][2];
         let changeMin = 0;
         let changeMax = 0;
 
+        let trendColor = "";
+
         strokeWeight(4);
 
         // Draws the line for the first two values.
         if (this.kagiValues[1][2] < rMin) {
-            stroke(255, 0, 0);
+            trendColor = "red";
+            stroke(trendColor);
             changeMin++;
             changeMax = 0;
             rMin = this.kagiValues[1][2];
 
         } else if (this.kagiValues[1][2] > rMax) {
-            stroke(0, 155, 44);
+            trendColor = "green";
+            stroke(trendColor);
             changeMax++;
             changeMin = 0;
             rMax = this.kagiValues[1][2];
         }
 
+        // Vertical line
         line(this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[0][2]),
             this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[1][2]));
 
+        // Horizontal line
         line(this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[1][2]),
             this.layout.leftMargin + (this.widthProportion),
@@ -236,11 +242,11 @@ function Kagi() {
             let currentValue = this.mapStockToHeight(this.kagiValues[i][2]);
             let nextValue = this.mapStockToHeight(this.kagiValues[i + 1][2]);
 
-            if (this.kagiValues[i + 1][2] <= rMin) {
+            if (this.kagiValues[i + 1][2] < rMin) {
                 stroke(255, 0, 0);
                 changeMin++;
                 changeMax = 0;
-            } else if (this.kagiValues[i + 1][2] >= rMax) {
+            } else if (this.kagiValues[i + 1][2] > rMax) {
                 stroke(0, 155, 44);
                 changeMax++;
                 changeMin = 0;
