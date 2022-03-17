@@ -7,7 +7,7 @@ function Kagi() {
     this.id = 'amazon-kagi';
 
     // Title to display above the plot.
-    this.title = 'Amazon stock analysis with Kagi chart';
+    this.title = 'Amazon Stock 2021 - Kagi chart';
 
     // Private variables
     let marginSize = 35;
