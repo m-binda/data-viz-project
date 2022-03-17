@@ -358,26 +358,30 @@ function Kagi() {
         // Map function must be passed with .bind(this).
         // var x = this.mapXToWidthTemp(value);
 
-        let textAdjust = -5;
         for (let i = 0; i < this.kagiValues.length; i++) {
             let x = this.layout.leftMargin + (this.widthProportion * i);
-            let textX = this.layout.leftMargin + (this.widthProportion * (i - 1));
 
             fill(0);
             noStroke();
             textAlign('center', 'center');
-
-            // rotate(180);
+            textSize(13);
 
             // Add tick label, skipping one every three.
             if (i % 3 !== 0) {
+                // Writes the text and rotates it
+                push();
+                translate(x,
+                    this.layout.bottomMargin + (this.layout.marginSize / 1.3) * (i % 3))
+                rotate(HALF_PI - 0.9);
                 text(this.kagiValues[i][1],
-                    textX + textAdjust,
-                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3));
+                    0, 0);
+                pop();
+
+                // Draws the line connecting the date to the graph
                 stroke(155);
+                strokeWeight(0.5);
                 line(x,
-                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3) - 10, x, this.layout.bottomMargin)
-                textAdjust *= -1;
+                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3) - 5, x, this.layout.bottomMargin)
             }
 
 
