@@ -66,10 +66,6 @@ function Kagi() {
         max: 0,
     };
 
-    // ??? It seems this is not needed
-    // Initiate variable to be used in the Kagi chart
-    // this.kagiValues = [];
-
     this.setup = function () {
 
         textSize(16);
@@ -95,18 +91,18 @@ function Kagi() {
         // break the current trend according to the currently established 
         // percentage.
 
-        // Initiate the value for the minimum percentage variation to alter
+        // Initiate the array for the values that matter to the Kagi chart
+        this.kagiValues = [];
+
+        // Initiate the value for the minimum percentage change to alter
         // the line trend in the Kagi chart
         this.priceVar = 1.01;
-
-        // Initiate the array for the drawing of the Kagi chart
-        this.kagiValues = [];
 
         // Adds the first and second value to calculate the trend later
         // Adds the first value
         this.kagiValues.push(this.series[0]);
 
-        // Adds second value based on the minimun variation
+        // Adds second value based on priceVar
         for (let i = 0; i < this.series.length; i++) {
             let l = this.kagiValues.length
             if (
@@ -120,11 +116,12 @@ function Kagi() {
         }
 
         // Adds subsequent values according to changes in trend.
+        // Compares each time to the previous two values
         for (let i = this.kNextPos; i < this.series.length; i++) {
 
             let l = this.kagiValues.length;
 
-            // If the current trend is downwards
+            // If the current trend is negative
             if (this.kagiValues[l - 2][2] < this.kagiValues[l - 1][2]) {
                 // Replaces the current minimum value
                 if (this.kagiValues[l - 1][2] < this.series[i][2]) {
@@ -135,7 +132,7 @@ function Kagi() {
                     this.kagiValues.push(this.series[i]);
                 }
             }
-            // If the current trend is upwards
+            // If the current trend is positive
             else {
                 // Replaces the current maximum value
                 if (this.kagiValues[l - 1][2] > this.series[i][2]) {
@@ -147,23 +144,6 @@ function Kagi() {
                 }
             }
         }
-
-        // // Add last value.
-        // let l = this.kagiValues.length;
-        // let sLen = this.series.length;
-        // if (this.kagiValues[l - 2][2] < this.kagiValues[l - 1][2]) {
-        //     if (this.kagiValues[l - 1][2] < this.series[sLen - 1][2]) {
-        //         this.kagiValues[l - 1] = this.series[sLen - 1];
-        //     } else if (this.kagiValues[l - 1][2] > this.series[sLen - 1][2] * this.priceVar) {
-        //         this.kagiValues.push(this.series[sLen - 1]);
-        //     }
-        // } else {
-        //     if (this.kagiValues[l - 1][2] > this.series[sLen - 1][2]) {
-        //         this.kagiValues[l - 1] = this.series[sLen - 1];
-        //     } else if (this.kagiValues[l - 1][2] < this.series[sLen - 1][2] * this.priceVar) {
-        //         this.kagiValues.push(this.series[sLen - 1]);
-        //     }
-        // }
 
         console.log(this.kagiValues);
 
@@ -184,110 +164,152 @@ function Kagi() {
         // Draw the title above the plot
         this.drawTitle();
 
-
         // Currently drawing x ticks on top of each other.
         // Cannot be skipped because the way the Kagi chart is calculated, so I 
         // must find another solution.
         this.drawXAxisTickLabelTemp();
 
-
         // Adds y ticks
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
             this.layout, this.mapStockToHeight.bind(this));
 
-
-        // Logic to draw the graph
-        let rMin = this.kagiValues[0][2];
-        let rMax = this.kagiValues[0][2];
-        let changeMin = 0;
-        let changeMax = 0;
-
-        let trendColor = "";
+        // Initiate variable to check the current trend
+        let trend;
 
         strokeWeight(4);
 
         // Draws the line for the first two values.
-        if (this.kagiValues[1][2] < rMin) {
-            trendColor = "red";
-            stroke(trendColor);
-            changeMin++;
-            changeMax = 0;
-            rMin = this.kagiValues[1][2];
-
-        } else if (this.kagiValues[1][2] > rMax) {
-            trendColor = "green";
-            stroke(trendColor);
-            changeMax++;
-            changeMin = 0;
-            rMax = this.kagiValues[1][2];
+        // Negative trend
+        if (this.kagiValues[1][2] < this.kagiValues[0][2]) {
+            stroke("red");
+            trend = false;
+        }
+        // Positive trend
+        else if (this.kagiValues[1][2] > this.kagiValues[0][2]) {
+            stroke("green");
+            trend = true;
         }
 
+        // Draws the lines connecting the first two values
         // Vertical line
         line(this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[0][2]),
             this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[1][2]));
-
         // Horizontal line
         line(this.layout.leftMargin,
             this.mapStockToHeight(this.kagiValues[1][2]),
             this.layout.leftMargin + (this.widthProportion),
             this.mapStockToHeight(this.kagiValues[1][2]));
 
-        // Draw the subsequent lines
-        for (let i = 1; i < this.kagiValues.length - 1; i++) {
-            let currentX = this.layout.leftMargin + (this.widthProportion * i);
-            let nextX = this.layout.leftMargin + (this.widthProportion * (i + 1));
+        // Logic to draw subsequent lines
+        for (let i = 2; i < this.kagiValues.length; i++) {
 
-            let currentValue = this.mapStockToHeight(this.kagiValues[i][2]);
-            let nextValue = this.mapStockToHeight(this.kagiValues[i + 1][2]);
+            // Variables for the x axis of the current and the next dates
+            let currentX = this.layout.leftMargin + (this.widthProportion * (i - 1));
+            let nextX = this.layout.leftMargin + (this.widthProportion * i);
 
-            if (this.kagiValues[i + 1][2] < rMin) {
-                stroke(255, 0, 0);
-                changeMin++;
-                changeMax = 0;
-            } else if (this.kagiValues[i + 1][2] > rMax) {
-                stroke(0, 155, 44);
-                changeMax++;
-                changeMin = 0;
+            // Maps the values of the current and previous stocks values
+            let currentMapVal = this.mapStockToHeight(this.kagiValues[i][2]);
+            let previousMapVal = this.mapStockToHeight(this.kagiValues[i - 1][2]);
+            let refMapVal = this.mapStockToHeight(this.kagiValues[i - 2][2]);
+
+            // Iniate variables for the current and previous stock values
+            let currentVal = this.kagiValues[i][2];
+            let previousVal = this.kagiValues[i - 1][2];
+            let refVal = this.kagiValues[i - 2][2];
+
+            // Checks if this is a peak
+            if (currentVal > previousVal) {
+
+                // Check if current value is larger than the previous two
+                if (currentVal > refVal) {
+                    stroke("green")
+                    line(nextX, currentMapVal,
+                        currentX, currentMapVal);
+
+                    // If current trend already positive, maintain
+                    if (trend) {
+                        stroke("green");
+                        line(currentX, previousMapVal,
+                            currentX, refMapVal);
+                        line(currentX, refMapVal,
+                            currentX, currentMapVal);
+                    }
+
+                    // If current trend negative, inverts trend
+                    else {
+                        stroke("red");
+                        line(currentX, previousMapVal,
+                            currentX, refMapVal);
+                        stroke("green");
+                        line(currentX, refMapVal,
+                            currentX, currentMapVal);
+                        trend = !trend;
+                    }
+                }
+                // If current value only larger than previous, maintains trend
+                else {
+                    if (trend) {
+                        stroke("green");
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                        line(currentX, previousMapVal,
+                            currentX, currentMapVal);
+                    } else {
+                        stroke("red")
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                        line(currentX, previousMapVal,
+                            currentX, currentMapVal);
+                    }
+                }
             }
+            // Checks if this is a valley
+            else {
 
-            // Draws the main lines connecting the values
-            line(currentX, currentValue,
-                currentX, nextValue);
-
-            line(currentX, nextValue,
-                nextX, nextValue);
-
-
-            // Changes the current valid valley or peak
-            if (this.kagiValues[i][2] > this.kagiValues[i - 1][2]) {
-                rMin = this.kagiValues[i - 1][2];
-                rMax = this.kagiValues[i][2];
-            } else {
-                rMin = this.kagiValues[i][2];
-                rMax = this.kagiValues[i - 1][2];
-            }
-
-            // Logic to change the line in the correct point of the Kagi chart
-            // Currently not working well.
-            if (changeMin === 1) {
-                stroke(0, 155, 44);
-                line(currentX, currentValue,
-                    currentX, this.mapStockToHeight(rMin));
-                stroke(255, 0, 0);
-                line(currentX, this.mapStockToHeight(rMin),
-                    currentX, nextValue);
-            } else if (changeMax === 1) {
-                stroke(255, 0, 0);
-                line(currentX, currentValue,
-                    currentX, this.mapStockToHeight(rMax));
-                stroke(0, 155, 44);
-                line(currentX, this.mapStockToHeight(rMax),
-                    currentX, nextValue);
+                // If current value only smaller than previous, maintains trend
+                if (currentVal > refVal) {
+                    if (trend) {
+                        stroke("green");
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                        line(currentX, previousMapVal,
+                            currentX, currentMapVal);
+                    } else {
+                        stroke("red");
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                        line(currentX, previousMapVal,
+                            currentX, currentMapVal);
+                    }
+                }
+                // Check if current value is smaller than the previous two
+                else {
+                    stroke("red")
+                    line(nextX, currentMapVal,
+                        currentX, currentMapVal);
+                    // If current trend positive, inverts trend
+                    if (trend) {
+                        stroke("green");
+                        line(currentX, previousMapVal,
+                            currentX, refMapVal);
+                        stroke("red");
+                        line(currentX, refMapVal,
+                            currentX, currentMapVal);
+                        trend = !trend;
+                    }
+                    // If current trend already negative, maintain
+                    else {
+                        stroke("red");
+                        line(currentX, previousMapVal,
+                            currentX, refMapVal);
+                        line(currentX, refMapVal,
+                            currentX, currentMapVal);
+                    }
+                }
             }
         }
-
     }
 
 
@@ -324,6 +346,7 @@ function Kagi() {
         let textAdjust = -5;
         for (let i = 0; i < this.kagiValues.length; i++) {
             let x = this.layout.leftMargin + (this.widthProportion * i);
+            let textX = this.layout.leftMargin + (this.widthProportion * (i - 1));
 
             fill(0);
             noStroke();
@@ -334,7 +357,7 @@ function Kagi() {
             // Add tick label, skipping one every three.
             if (i % 3 !== 0) {
                 text(this.kagiValues[i][1],
-                    x + textAdjust,
+                    textX + textAdjust,
                     this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3));
                 stroke(155);
                 line(x,
