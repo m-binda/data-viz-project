@@ -115,6 +115,8 @@ function Kagi() {
             }
         }
 
+        console.log(this.kagiValues);
+
         // Adds subsequent values according to changes in trend.
         // Compares each time to the previous two values
         for (let i = this.kNextPos; i < this.series.length; i++) {
@@ -145,8 +147,6 @@ function Kagi() {
             }
         }
 
-        console.log(this.kagiValues);
-
         // Since the Kagi chart does not care about proportional dates
         // in the x axis but only with changing trends, any value in the 
         // series must be equidistant in the graph.
@@ -167,7 +167,7 @@ function Kagi() {
         // Currently drawing x ticks on top of each other.
         // Cannot be skipped because the way the Kagi chart is calculated, so I 
         // must find another solution.
-        this.drawXAxisTickLabelTemp();
+        this.drawXAxisTickLabelStock();
 
         // Adds y ticks
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
@@ -350,38 +350,36 @@ function Kagi() {
             this.layout.rightMargin);
     }
 
-
     // This function is similar to the one in helper-functions.js
     // but it writes the full date based on the day of the year.
     // I plan to adapt the main function later and unify them.
-    this.drawXAxisTickLabelTemp = function () {
+    this.drawXAxisTickLabelStock = function () {
         // Map function must be passed with .bind(this).
         // var x = this.mapXToWidthTemp(value);
 
         for (let i = 0; i < this.kagiValues.length; i++) {
-            let x = this.layout.leftMargin + (this.widthProportion * i);
+            let x = this.layout.leftMargin + (this.widthProportion * (i - 1));
+            let y = this.layout.bottomMargin + ((this.layout.marginSize * 1.5) * (i % 4 / 3));
+            let xGrid = this.layout.leftMargin + (this.widthProportion * i);
 
             fill(0);
             noStroke();
             textAlign('center', 'center');
-            textSize(13);
+            textSize(15);
 
             // Add tick label, skipping one every three.
-            if (i % 3 !== 0) {
+            if (i % 2 !== 0) {
                 // Writes the text and rotates it
                 push();
-                translate(x,
-                    this.layout.bottomMargin + (this.layout.marginSize / 1.3) * (i % 3))
+                translate(x, y);
                 rotate(HALF_PI - 0.9);
-                text(this.kagiValues[i][1],
-                    0, 0);
+                text(this.kagiValues[i][1], 0, 0);
                 pop();
 
                 // Draws the line connecting the date to the graph
                 stroke(155);
                 strokeWeight(0.5);
-                line(x,
-                    this.layout.bottomMargin + (this.layout.marginSize / 1.5) * (i % 3) - 5, x, this.layout.bottomMargin)
+                line(x, y - 10, x, this.layout.bottomMargin)
             }
 
 
@@ -389,9 +387,9 @@ function Kagi() {
                 // Add grid line.
                 stroke(220);
                 strokeWeight(1)
-                line(x,
+                line(xGrid,
                     this.layout.topMargin,
-                    x,
+                    xGrid,
                     this.layout.bottomMargin);
             }
         }
