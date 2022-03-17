@@ -224,9 +224,12 @@ function Kagi() {
 
                 // Check if current value is larger than the previous two
                 if (currentVal > refVal) {
-                    stroke("green")
-                    line(nextX, currentMapVal,
-                        currentX, currentMapVal);
+                    stroke("green");
+                    // Does not draw the horizontal line for the last value
+                    if (i != this.kagiValues.length - 1) {
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                    }
 
                     // If current trend already positive, maintain
                     if (trend) {
@@ -252,8 +255,11 @@ function Kagi() {
                 else {
                     if (trend) {
                         stroke("green");
-                        line(nextX, currentMapVal,
-                            currentX, currentMapVal);
+                        // Does not draw the horizontal line for the last value
+                        if (i != this.kagiValues.length - 1) {
+                            line(nextX, currentMapVal,
+                                currentX, currentMapVal);
+                        }
                         line(currentX, previousMapVal,
                             currentX, currentMapVal);
                     } else {
@@ -272,14 +278,20 @@ function Kagi() {
                 if (currentVal > refVal) {
                     if (trend) {
                         stroke("green");
-                        line(nextX, currentMapVal,
-                            currentX, currentMapVal);
+                        // Does not draw the horizontal line for the last value
+                        if (i != this.kagiValues.length - 1) {
+                            line(nextX, currentMapVal,
+                                currentX, currentMapVal);
+                        }
                         line(currentX, previousMapVal,
                             currentX, currentMapVal);
                     } else {
                         stroke("red");
-                        line(nextX, currentMapVal,
-                            currentX, currentMapVal);
+                        // Does not draw the horizontal line for the last value
+                        if (i != this.kagiValues.length - 1) {
+                            line(nextX, currentMapVal,
+                                currentX, currentMapVal);
+                        }
                         line(currentX, previousMapVal,
                             currentX, currentMapVal);
                     }
@@ -287,8 +299,11 @@ function Kagi() {
                 // Check if current value is smaller than the previous two
                 else {
                     stroke("red")
-                    line(nextX, currentMapVal,
-                        currentX, currentMapVal);
+                    // Does not draw the horizontal line for the last value
+                    if (i != this.kagiValues.length - 1) {
+                        line(nextX, currentMapVal,
+                            currentX, currentMapVal);
+                    }
                     // If current trend positive, inverts trend
                     if (trend) {
                         stroke("green");
