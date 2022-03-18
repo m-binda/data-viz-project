@@ -19,7 +19,7 @@ function setup() {
   gallery.addVisual(new ClimateChange());
   gallery.addVisual(new SP500());
   gallery.addVisual(new AppleStock());
-  gallery.addVisual(new Kagi());
+  gallery.addVisual(new KagiStocks());
   gallery.addVisual(new WordCloud());
 }
 

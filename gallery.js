@@ -9,8 +9,8 @@ function Gallery() {
   this.addVisual = function (vis) {
 
     // Check that the vis object has an id and name.
-    if (!vis.hasOwnProperty('id')
-      && !vis.hasOwnProperty('name')) {
+    if (!vis.hasOwnProperty('id') &&
+      !vis.hasOwnProperty('name')) {
       alert('Make sure your visualisation has an id and name!');
     }
 
@@ -82,8 +82,8 @@ function Gallery() {
 
     if (visIndex != null) {
       // If the current visualisation has a deselect method run it.
-      if (this.selectedVisual != null
-        && this.selectedVisual.hasOwnProperty('destroy')) {
+      if (this.selectedVisual != null &&
+        this.selectedVisual.hasOwnProperty('destroy')) {
         this.selectedVisual.destroy();
       }
       // Select the visualisation in the gallery.
