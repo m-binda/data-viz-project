@@ -1,6 +1,6 @@
 function KagiChart() {
 
-    this.getSeries = function (data) {
+    this.getSeries = function (data, companyName) {
 
         // Initiate variables for the series and min and max values for the
         // stock price and the date range.
@@ -9,22 +9,20 @@ function KagiChart() {
         // Populates the series array with all information in the data file
         // and sets min and max values for date and stock prices
         for (let i = 0; i < data.getRowCount(); i++) {
-            let row = data.getRow(i);
-            let dayInYear = int(row["arr"][0]);
-            let dateString = row["arr"][1];
-            let close = float(row["arr"][2]);
+            let dateString = data.getColumn(0)[i];
+            let close = float(data.getColumn(companyName)[i]);
 
-            series[i] = [dayInYear, dateString, close];
+            series[i] = [dateString, close];
         }
 
         return series;
     };
 
-    this.makeKagi = function (data) {
+    this.makeKagi = function (data, companyName = "Apple") {
 
         self = this;
 
-        let series = self.getSeries(data);
+        let series = self.getSeries(data, companyName);
 
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
@@ -47,8 +45,8 @@ function KagiChart() {
         for (let i = 0; i < series.length; i++) {
             let l = kagiValues.length
             if (
-                series[i][2] > (kagiValues[l - 1][2] * priceVar) ||
-                series[i][2] < (kagiValues[l - 1][2] * (2 - priceVar))
+                series[i][1] > (kagiValues[l - 1][1] * priceVar) ||
+                series[i][1] < (kagiValues[l - 1][1] * (2 - priceVar))
             ) {
                 kagiValues.push(series[i]);
                 kNextPos = i + 1; // Adjust position for next loop
@@ -63,24 +61,24 @@ function KagiChart() {
             let l = kagiValues.length;
 
             // If the current trend is negative
-            if (kagiValues[l - 2][2] < kagiValues[l - 1][2]) {
+            if (kagiValues[l - 2][1] < kagiValues[l - 1][1]) {
                 // Replaces the current minimum value
-                if (kagiValues[l - 1][2] < series[i][2]) {
+                if (kagiValues[l - 1][1] < series[i][1]) {
                     kagiValues[l - 1] = series[i];
                 }
                 // Adds new value if trend changes
-                else if (kagiValues[l - 1][2] * (2 - priceVar) > series[i][2]) {
+                else if (kagiValues[l - 1][1] * (2 - priceVar) > series[i][1]) {
                     kagiValues.push(series[i]);
                 }
             }
             // If the current trend is positive
             else {
                 // Replaces the current maximum value
-                if (kagiValues[l - 1][2] > series[i][2]) {
+                if (kagiValues[l - 1][1] > series[i][1]) {
                     kagiValues[l - 1] = series[i];
                 }
                 // Adds new value if trend changes
-                else if (kagiValues[l - 1][2] * priceVar < series[i][2]) {
+                else if (kagiValues[l - 1][1] * priceVar < series[i][1]) {
                     kagiValues.push(series[i]);
                 }
             }
@@ -99,12 +97,12 @@ function KagiChart() {
 
         // Draws the line for the first two values.
         // Negative trend
-        if (_kagiValues[1][2] < _kagiValues[0][2]) {
+        if (_kagiValues[1][1] < _kagiValues[0][1]) {
             stroke("red");
             trend = false;
         }
         // Positive trend
-        else if (_kagiValues[1][2] > _kagiValues[0][2]) {
+        else if (_kagiValues[1][1] > _kagiValues[0][1]) {
             stroke("green");
             trend = true;
         }
@@ -112,14 +110,14 @@ function KagiChart() {
         // Draws the lines connecting the first two values
         // Vertical line
         line(layout.leftMargin,
-            mapFunction(_kagiValues[0][2]),
+            mapFunction(_kagiValues[0][1]),
             layout.leftMargin,
-            mapFunction(_kagiValues[1][2]));
+            mapFunction(_kagiValues[1][1]));
         // Horizontal line
         line(layout.leftMargin,
-            mapFunction(_kagiValues[1][2]),
+            mapFunction(_kagiValues[1][1]),
             layout.leftMargin + (widthProportion),
-            mapFunction(_kagiValues[1][2]));
+            mapFunction(_kagiValues[1][1]));
 
         // Logic to draw subsequent lines
         for (let i = 2; i < _kagiValues.length; i++) {
@@ -129,14 +127,14 @@ function KagiChart() {
             let nextX = layout.leftMargin + (widthProportion * i);
 
             // Maps the values of the current and previous stocks values
-            let currentMapVal = mapFunction(_kagiValues[i][2]);
-            let previousMapVal = mapFunction(_kagiValues[i - 1][2]);
-            let refMapVal = mapFunction(_kagiValues[i - 2][2]);
+            let currentMapVal = mapFunction(_kagiValues[i][1]);
+            let previousMapVal = mapFunction(_kagiValues[i - 1][1]);
+            let refMapVal = mapFunction(_kagiValues[i - 2][1]);
 
             // Iniate variables for the current and previous stock values
-            let currentVal = _kagiValues[i][2];
-            let previousVal = _kagiValues[i - 1][2];
-            let refVal = _kagiValues[i - 2][2];
+            let currentVal = _kagiValues[i][1];
+            let previousVal = _kagiValues[i - 1][1];
+            let refVal = _kagiValues[i - 2][1];
 
             // Checks if this is a peak
             if (currentVal > previousVal) {

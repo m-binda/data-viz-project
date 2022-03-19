@@ -10,7 +10,7 @@ function KagiStocks() {
     this.title = 'Stocks in Kagi Chart - 2021';
 
     // Private variables
-    let marginSize = 35;
+    let marginSize = 50;
 
     // Layout object to store all common plot layout parameters and
     // methods.
@@ -46,15 +46,7 @@ function KagiStocks() {
     this.preload = function () {
         let self = this;
         this.data = loadTable(
-            './data/amazon-stock/AmazonHistoricalData.csv', 'csv', 'header',
-            // Callback function to set the value
-            // this.loaded to true.
-            function (table) {
-                self.loaded = true;
-            });
-
-        this.data2 = loadTable(
-            './data/amazon-stock/HistoricalData.csv', 'csv', 'header',
+            './data/kagi-stock/HistoricalData.csv', 'csv', 'header',
             // Callback function to set the value
             // this.loaded to true.
             function (table) {
@@ -63,6 +55,7 @@ function KagiStocks() {
     };
 
     this.kagiChart = new KagiChart();
+
 
     this.setup = function () {
         if (!this.loaded) {
@@ -75,7 +68,7 @@ function KagiStocks() {
         this.select.position(width / 1.4, height);
 
         // Fill the options with all company names.
-        let companies = this.data2.columns;
+        let companies = this.data.columns;
 
         // First entry is empty.
         for (let i = 1; i < companies.length; i++) {
@@ -89,6 +82,7 @@ function KagiStocks() {
         // series must be equidistant in the graph.
         this.widthProportion = (this.layout.rightMargin - this.layout.leftMargin) /
             this.kagiValues.length;
+
     }
 
     this.destroy = function () {
@@ -102,6 +96,18 @@ function KagiStocks() {
             return;
         }
 
+        // Get the value of the company we're interested in from the
+        // select item.
+        let companyName = this.select.value();
+
+        this.kagiValues = this.kagiChart.makeKagi(this.data, companyName);
+
+        // Since the Kagi chart does not care about proportional dates
+        // in the x axis but only with changing trends, any value in the 
+        // series must be equidistant in the graph.
+        this.widthProportion = (this.layout.rightMargin - this.layout.leftMargin) /
+            this.kagiValues.length;
+
         // Draw the title above the plot
         this.drawTitle();
 
@@ -110,11 +116,12 @@ function KagiStocks() {
         // must find another solution.
         this.drawXAxisTickLabelStock();
 
+
         // Calculate min and max stock values
         this.minStockValue = 99999;
         this.maxStockValue = 0;
         for (let i = 0; i < this.kagiValues.length; i++) {
-            let close = this.kagiValues[i][2];
+            let close = this.kagiValues[i][1];
             this.maxStockValue = max(this.maxStockValue, close);
             this.minStockValue = min(this.minStockValue, close);
         }
@@ -152,7 +159,7 @@ function KagiStocks() {
 
         for (let i = 0; i < this.kagiValues.length; i++) {
             let x = this.layout.leftMargin + (this.widthProportion * (i - 1));
-            let y = this.layout.bottomMargin + ((this.layout.marginSize * 1.2) * (i % 4 / 3));
+            let y = this.layout.bottomMargin + ((this.layout.marginSize * 1.3) * (i % 4 / 3));
             let xGrid = this.layout.leftMargin + (this.widthProportion * i);
 
             fill(0);
@@ -165,8 +172,8 @@ function KagiStocks() {
                 // Writes the text and rotates it
                 push();
                 translate(x, y);
-                rotate(HALF_PI - 0.9);
-                text(this.kagiValues[i][1], 0, 0);
+                rotate(HALF_PI - 1.3);
+                text(this.kagiValues[i][0], 0, 0);
                 pop();
 
                 // Draws the line connecting the date to the graph
