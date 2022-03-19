@@ -52,6 +52,7 @@ function KagiStocks() {
             function (table) {
                 self.loaded = true;
             });
+
     };
 
     this.kagiChart = new KagiChart();
@@ -154,8 +155,6 @@ function KagiStocks() {
     // but it writes the full date based on the day of the year.
     // I plan to adapt the main function later and unify them.
     this.drawXAxisTickLabelStock = function () {
-        // Map function must be passed with .bind(this).
-        // var x = this.mapXToWidthTemp(value);
 
         for (let i = 0; i < this.kagiValues.length; i++) {
             let x = this.layout.leftMargin + (this.widthProportion * (i - 1));
