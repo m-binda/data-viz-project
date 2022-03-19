@@ -4,7 +4,7 @@ function KagiStocks() {
 
     // Each visualisation must have a unique ID with no special
     // characters.
-    this.id = 'amazon-kagi';
+    this.id = 'kagi-charts';
 
     // Title to display above the plot.
     this.title = 'Stocks in Kagi Chart - 2021';
@@ -65,7 +65,6 @@ function KagiStocks() {
     this.kagiChart = new KagiChart();
 
     this.setup = function () {
-
         if (!this.loaded) {
             console.log('Data not yet loaded');
             return;
@@ -83,24 +82,7 @@ function KagiStocks() {
             this.select.option(companies[i]);
         }
 
-
-        // Initiate variables for the series and min and max values for the
-        // stock price and the date range.
-        this.minStockValue = 99999;
-        this.maxStockValue = 0;
-
-        // Populates the series array with all information in the data file
-        // and sets min and max values for date and stock prices
-        for (let i = 0; i < this.data.getRowCount(); i++) {
-            let row = this.data.getRow(i);
-            let close = float(row["arr"][2]);
-
-            this.maxStockValue = max(this.maxStockValue, close);
-            this.minStockValue = min(this.minStockValue, close);
-        }
-
         this.kagiValues = this.kagiChart.makeKagi(this.data);
-
 
         // Since the Kagi chart does not care about proportional dates
         // in the x axis but only with changing trends, any value in the 
@@ -128,11 +110,23 @@ function KagiStocks() {
         // must find another solution.
         this.drawXAxisTickLabelStock();
 
+        // Calculate min and max stock values
+        this.minStockValue = 99999;
+        this.maxStockValue = 0;
+        for (let i = 0; i < this.kagiValues.length; i++) {
+            let close = this.kagiValues[i][2];
+            this.maxStockValue = max(this.maxStockValue, close);
+            this.minStockValue = min(this.minStockValue, close);
+        }
+
+        this.maxStockValue = (Math.ceil(this.maxStockValue / 10)) * 10
+        this.minStockValue = (Math.floor(this.minStockValue / 10)) * 10
+
         // Adds y ticks
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
             this.layout, this.mapStockToHeight.bind(this));
 
-        this.kagiChart.draw(this.kagiValues, this.layout, this.widthProportion, this.minStockValue, this.maxStockValue);
+        this.kagiChart.draw(this.kagiValues, this.layout, this.widthProportion, this.mapStockToHeight.bind(this));
 
     }
 
@@ -201,5 +195,4 @@ function KagiStocks() {
             this.layout.bottomMargin,
             this.layout.topMargin);
     }
-
 }

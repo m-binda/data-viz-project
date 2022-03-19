@@ -1,18 +1,10 @@
 function KagiChart() {
 
-    // Initiate variables for the series and min and max values for the
-    // stock price and the date range.
-    // this.series = [];
-    // this.minStockValue = 99999;
-    // this.maxStockValue = 0;
-
     this.getSeries = function (data) {
 
         // Initiate variables for the series and min and max values for the
         // stock price and the date range.
         let series = [];
-        this.minStockValue = 99999;
-        this.maxStockValue = 0;
 
         // Populates the series array with all information in the data file
         // and sets min and max values for date and stock prices
@@ -23,9 +15,6 @@ function KagiChart() {
             let close = float(row["arr"][2]);
 
             series[i] = [dayInYear, dateString, close];
-
-            this.maxStockValue = max(this.maxStockValue, close);
-            this.minStockValue = min(this.minStockValue, close);
         }
 
         return series;
@@ -35,7 +24,7 @@ function KagiChart() {
 
         self = this;
 
-        let series = self.getSeries(data)
+        let series = self.getSeries(data);
 
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
@@ -100,8 +89,9 @@ function KagiChart() {
         return kagiValues;
     };
 
+    this.draw = function (_kagiValues, layout, widthProportion, mapFunction) {
+        // Map function must be passed with .bind(this).
 
-    this.draw = function (_kagiValues, layout, widthProportion, minStockValue, maxStockValue) {
         // Initiate variable to check the current trend
         let trend;
 
@@ -122,14 +112,14 @@ function KagiChart() {
         // Draws the lines connecting the first two values
         // Vertical line
         line(layout.leftMargin,
-            this.mapStockToHeight(_kagiValues[0][2], minStockValue, maxStockValue, layout),
+            mapFunction(_kagiValues[0][2]),
             layout.leftMargin,
-            this.mapStockToHeight(_kagiValues[1][2], minStockValue, maxStockValue, layout));
+            mapFunction(_kagiValues[1][2]));
         // Horizontal line
         line(layout.leftMargin,
-            this.mapStockToHeight(_kagiValues[1][2], minStockValue, maxStockValue, layout),
+            mapFunction(_kagiValues[1][2]),
             layout.leftMargin + (widthProportion),
-            this.mapStockToHeight(_kagiValues[1][2], minStockValue, maxStockValue, layout));
+            mapFunction(_kagiValues[1][2]));
 
         // Logic to draw subsequent lines
         for (let i = 2; i < _kagiValues.length; i++) {
@@ -139,9 +129,9 @@ function KagiChart() {
             let nextX = layout.leftMargin + (widthProportion * i);
 
             // Maps the values of the current and previous stocks values
-            let currentMapVal = this.mapStockToHeight(_kagiValues[i][2], minStockValue, maxStockValue, layout);
-            let previousMapVal = this.mapStockToHeight(_kagiValues[i - 1][2], minStockValue, maxStockValue, layout);
-            let refMapVal = this.mapStockToHeight(_kagiValues[i - 2][2], minStockValue, maxStockValue, layout);
+            let currentMapVal = mapFunction(_kagiValues[i][2]);
+            let previousMapVal = mapFunction(_kagiValues[i - 1][2]);
+            let refMapVal = mapFunction(_kagiValues[i - 2][2]);
 
             // Iniate variables for the current and previous stock values
             let currentVal = _kagiValues[i][2];
@@ -254,13 +244,5 @@ function KagiChart() {
                 }
             }
         }
-    }
-
-    this.mapStockToHeight = function (value, minStockValue, maxStockValue, layout) {
-        return map(value,
-            minStockValue,
-            maxStockValue,
-            layout.bottomMargin,
-            layout.topMargin);
     }
 }
