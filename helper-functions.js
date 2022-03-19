@@ -130,14 +130,3 @@ function drawXAxisTickLabel(value, layout, mapFunction) {
   }
 
 }
-
-
-// General plot range to width mapping function. Not 
-// implemented yet.
-function mapXToWidth(value, valueRange, layout) {
-  return map(value,
-    valueRange.min,
-    valueRange.max,
-    layout.leftMargin, // Draw left-to-right from margin.
-    layout.rightMargin);
-}
