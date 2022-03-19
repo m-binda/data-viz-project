@@ -34,7 +34,7 @@ function KagiStocks() {
 
         // Number of axis tick labels to draw so that they are not drawn on
         // top of one another.
-        numXTickLabels: 20,
+        numXTickLabels: 10,
         numYTickLabels: 8,
     };
 
@@ -62,18 +62,7 @@ function KagiStocks() {
             });
     };
 
-    // Initiate variables for the series and min and max values for the
-    // stock price and the date range.
-    this.series = [];
-    this.minStockValue = 99999;
-    this.maxStockValue = 0;
-
-    this.dateRange = {
-        min: 365,
-        max: 0,
-    };
-
-    this.kagiChartTest = new KagiChart();
+    this.kagiChart = new KagiChart();
 
     this.setup = function () {
 
@@ -94,24 +83,23 @@ function KagiStocks() {
             this.select.option(companies[i]);
         }
 
+
+        // Initiate variables for the series and min and max values for the
+        // stock price and the date range.
+        this.minStockValue = 99999;
+        this.maxStockValue = 0;
+
         // Populates the series array with all information in the data file
         // and sets min and max values for date and stock prices
         for (let i = 0; i < this.data.getRowCount(); i++) {
             let row = this.data.getRow(i);
-            let dayInYear = int(row["arr"][0]);
-            let dateString = row["arr"][1];
             let close = float(row["arr"][2]);
-
-            this.series[i] = [dayInYear, dateString, close];
 
             this.maxStockValue = max(this.maxStockValue, close);
             this.minStockValue = min(this.minStockValue, close);
-
-            this.dateRange.min = min(this.dateRange.min, dayInYear);
-            this.dateRange.max = max(this.dateRange.max, dayInYear);
         }
 
-        this.kagiValues = this.kagiChartTest.makeKagi(this.series);
+        this.kagiValues = this.kagiChart.makeKagi(this.data);
 
 
         // Since the Kagi chart does not care about proportional dates
@@ -144,7 +132,7 @@ function KagiStocks() {
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
             this.layout, this.mapStockToHeight.bind(this));
 
-        this.kagiChartTest.draw(this.kagiValues, this.layout, this.widthProportion, this.minStockValue, this.maxStockValue);
+        this.kagiChart.draw(this.kagiValues, this.layout, this.widthProportion, this.minStockValue, this.maxStockValue);
 
     }
 

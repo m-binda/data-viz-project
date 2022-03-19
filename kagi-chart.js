@@ -6,16 +6,37 @@ function KagiChart() {
     // this.minStockValue = 99999;
     // this.maxStockValue = 0;
 
-    this.dateRange = {
-        min: 365,
-        max: 0,
-    };
-
     this.getSeries = function (data) {
 
+        // Initiate variables for the series and min and max values for the
+        // stock price and the date range.
+        let series = [];
+        this.minStockValue = 99999;
+        this.maxStockValue = 0;
+
+        // Populates the series array with all information in the data file
+        // and sets min and max values for date and stock prices
+        for (let i = 0; i < data.getRowCount(); i++) {
+            let row = data.getRow(i);
+            let dayInYear = int(row["arr"][0]);
+            let dateString = row["arr"][1];
+            let close = float(row["arr"][2]);
+
+            series[i] = [dayInYear, dateString, close];
+
+            this.maxStockValue = max(this.maxStockValue, close);
+            this.minStockValue = min(this.minStockValue, close);
+        }
+
+        return series;
     };
 
-    this.makeKagi = function (series) {
+    this.makeKagi = function (data) {
+
+        self = this;
+
+        let series = self.getSeries(data)
+
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
         // percentage.
@@ -234,7 +255,6 @@ function KagiChart() {
             }
         }
     }
-
 
     this.mapStockToHeight = function (value, minStockValue, maxStockValue, layout) {
         return map(value,
