@@ -1,7 +1,7 @@
 function WordCloud() {
 
     // Name for the visualisation to appear in the menu bar.
-    this.name = 'Word Cloud - Memórias Póstumas de Brás Cubas';
+    this.name = 'Word Cloud - Othello';
 
     // Each visualisation must have a unique ID with no special
     // characters.
@@ -15,23 +15,33 @@ function WordCloud() {
     this.preload = function () {
         let self = this;
 
-        // this.data = loadTable(
-        //     './data/tech-diversity/race-2018.csv', 'csv', 'header',
-        //     // Callback function to set the value
-        //     // this.loaded to true.
-        //     function (table) {
-        //         self.loaded = true;
-        //     });
+        // How many words for the word cloud
+        let numberWords = 50;
 
+        // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
             this.book = join(book, " ");
             this.book = splitTokens(this.book, [
                 " ", ".", ",", "!", "?", "-", ";", ":", "(", ")",
                 "\n", "\t"
             ]);
+            // Initialize array to store words and their quantinties
+            this.wordCloud = [];
+
+            for (let i = 0; i < this.book.length; i++) {
+                if ((this.wordCloud.find(x => x.name === this.book[i])) === undefined) {
+                    this.wordCloud.push({
+                        name: this.book[i],
+                        quantity: 1
+                    })
+                } else {
+                    this.wordCloud.find(x => x.name === this.book[i]).quantity += 1;
+                }
+            };
+            this.wordCloud.sort((a, b) => b.quantity - a.quantity);
+            this.wordCloud = this.wordCloud.slice(0, numberWords);
             self.loaded = true;
         })
-
     };
 
     this.setup = function () {
@@ -40,21 +50,21 @@ function WordCloud() {
             return;
         }
 
-        this.wordCloud = {};
-
-        for (let i = 0; i < this.book.length; i++) {
-
-            if (!(this.book[i] in this.wordCloud)) {
-                this.wordCloud[this.book[i]] = {};
-                this.wordCloud[this.book[i]] = 1;
-            } else {
-                this.wordCloud[this.book[i]]++;
-            }
-
-        }
+        // Initiate min and max text size
+        this.minTextSize = 20;
+        this.maxTextSize = 200;
 
         console.log(this.wordCloud);
 
+        this.wordColors = [];
+
+        for (let i = 0; i < this.wordCloud.length; i++) {
+            this.wordColors.push([
+                random(0, 255), random(0, 255), random(0, 255)
+            ]);
+        }
+
+        console.log(width);
     };
 
 
@@ -65,7 +75,29 @@ function WordCloud() {
             return;
         }
 
+        let maxSize = this.wordCloud[0].quantity
+        let minSize = this.wordCloud[this.wordCloud.length - 1].quantity
 
+        noStroke();
 
+        for (let i = 0; i < this.wordCloud.length; i++) {
+            let name = this.wordCloud[i].name
+            let qty = this.wordCloud[i].quantity
+
+            fill(this.wordColors[i]);
+            textAlign(CENTER, CENTER);
+            textSize(this.mapQtyToSize(qty, minSize, maxSize));
+            text(name, width / 2, height / 2);
+        }
+
+    };
+
+    this.mapQtyToSize = function (quantity, min, max) {
+        return map(
+            quantity,
+            min, max,
+            this.minTextSize,
+            this.maxTextSize
+        );
     };
 }
