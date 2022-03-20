@@ -1,124 +1,97 @@
-function WordCloud() {
+function WordCloud(_name) {
 
-    // Name for the visualisation to appear in the menu bar.
-    this.name = 'Word Cloud - Othello';
+    this.name = _name;
+    this.quantity = 1;
+    this.size = 0;
+    this.pos = createVector(0, 0);
+    this.dir = createVector(0, 0);
+    this.x1 = 0;
+    this.x2 = 0;
+    this.y1 = 0
+    this.y2 = 0;
+    this.wordColor = [random(0, 255), random(0, 255), random(0, 255)];
 
-    // Each visualisation must have a unique ID with no special
-    // characters.
-    this.id = 'word-cloud';
+    this.dir = createVector(0, 0);
 
-    // Property to represent whether data has been loaded.
-    this.loaded = false;
+    this.draw = function (_font) {
 
-    // Preload the data. This function is called automatically by the
-    // gallery when a visualisation is added.
-    this.preload = function () {
+        let self = this;
+        push();
+        noStroke();
+        textFont(_font);
+        fill(self.wordColor);
+        textAlign(CENTER, CENTER);
+        textSize(self.size);
+        text(self.name, self.pos.x, self.pos.y);
+        pop();
+    }
+
+
+    this.updateSize = function (minQty, maxQty, minText, maxText, _font) {
         let self = this;
 
-        // How many words for the word cloud
-        let numberWords = 50;
-
-        // Minimum length
-        let wordLength = 3;
-
-        // Loads the book and creates an array with all the words
-        loadStrings('./data/word-cloud/othello.txt', (book) => {
-            this.book = join(book, " ");
-            this.book = splitTokens(this.book, [
-                " ", ".", ",", "!", "?", "-", ";", ":", "(", ")",
-                "\n", "\t"
-            ]);
-            // Initialize array to store words and their quantinties
-            this.wordCloud = [];
-            for (let i = 0; i < this.book.length; i++) {
-                if (this.book[i].length > wordLength) {
-                    if ((this.wordCloud.find(x => x.name === this.book[i].toUpperCase())) === undefined) {
-                        this.wordCloud.push({
-                            name: this.book[i].toUpperCase(),
-                            quantity: 1
-                        })
-                    } else {
-                        this.wordCloud.find(x => x.name === this.book[i].toUpperCase()).quantity += 1;
-                    }
-                }
-            };
-
-            this.monoFont;
-            this.monoFont = loadFont('assets/PTMono-Regular.ttf');
-
-            this.wordCloud.sort((a, b) => b.quantity - a.quantity);
-            this.wordCloud = this.wordCloud.slice(0, numberWords);
-            self.loaded = true;
-        });
-
-    };
-
-    this.setup = function () {
-        if (!this.loaded) {
-            console.log('Data not yet loaded');
-            return;
-        }
-
-        // Initiate min and max text size
-        this.minTextSize = 40;
-        this.maxTextSize = 150;
-
-        this.wordColors = [];
-
-        for (let i = 0; i < this.wordCloud.length; i++) {
-            this.wordColors.push([
-                random(0, 255), random(0, 255), random(0, 255)
-            ]);
-        }
-
-    };
-
-
-
-    this.draw = function () {
-        if (!this.loaded) {
-            console.log('Data not yet loaded');
-            return;
-        }
-
-        let maxSize = this.wordCloud[0].quantity
-        let minSize = this.wordCloud[this.wordCloud.length - 1].quantity
-
-        noStroke();
-        textFont(this.monoFont);
-        let textLimits = [];
-
-
-
-        for (let i = 0; i < this.wordCloud.length; i++) {
-            let name = this.wordCloud[i].name
-            let qty = this.wordCloud[i].quantity
-            let size = this.mapQtyToSize(qty, minSize, maxSize)
-
-            push();
-            translate(width / 2, height / 2);
-            fill(this.wordColors[i]);
-            textAlign(CENTER, CENTER);
-            textSize(size);
-            text(name, 0, 0);
-
-            textLimits.push(this.monoFont.textBounds(name, 0, 0, size))
-
-            fill(100, 100, 100, 100);
-            rect(textLimits[i].x, textLimits[i].y, textLimits[i].w, textLimits[i].h);
-            pop();
-        }
-
-        // console.log(textLimits);
-
-    };
-
-    this.mapQtyToSize = function (quantity, min, max) {
-        return map(
-            quantity,
-            min, max,
-            this.minTextSize,
-            this.maxTextSize
+        this.size = map(
+            this.quantity,
+            minQty, maxQty,
+            minText,
+            maxText
         );
-    };
+
+        let bounds = _font.textBounds(self.name, self.pos.x, self.pos.y, self.size);
+
+        self.x1 = bounds.x;
+        self.x2 = self.x1 + bounds.w;
+        self.y1 = bounds.y;
+        self.y2 = self.y1 + bounds.h;
+    }
+
+    this.updatePos = function (_wordCloud) {
+
+        let self = this;
+
+        self.dir.set(0, 0);
+
+        for (var i = 0; i < _wordCloud.length; i++) {
+            if (_wordCloud[i].name != self.name) {
+
+                let otherX1 = _wordCloud[i].x1;
+                let otherX2 = _wordCloud[i].x2;
+                let otherY1 = _wordCloud[i].y1;
+                let otherY2 = _wordCloud[i].y2;
+
+                if (
+                    self.x1 < otherX2 + 20 &&
+                    self.x2 + 20 > otherX1 &&
+                    self.y1 < otherY2 + 20 &&
+                    self.y2 + 20 > otherY1
+                ) {
+                    this.dir.add(p5.Vector.random2D());
+                }
+
+
+                // var v = p5.Vector.sub(this.pos, _bubbles[i].pos);
+                // var d = v.mag();
+
+
+
+                // if (d < this.size / 2 + _bubbles[i].size / 2) {
+                //     if (d > 0) {
+
+                //         this.direction.add(v)
+                //     } else {
+                //         this.direction.add(p5.Vector.random2D());
+
+                //     }
+                // }
+
+            }
+        }
+
+        _wordCloud[0].pos = createVector(0, 0);
+        self.dir.normalize();
+        self.dir.mult(20);
+        self.pos.add(self.dir);
+    }
+
+
 }

@@ -20,7 +20,7 @@ function setup() {
   gallery.addVisual(new SP500());
   gallery.addVisual(new AppleStock());
   gallery.addVisual(new KagiStocks());
-  gallery.addVisual(new WordCloud());
+  gallery.addVisual(new WordCloudViz());
 }
 
 function draw() {
