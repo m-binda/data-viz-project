@@ -18,6 +18,9 @@ function WordCloud() {
         // How many words for the word cloud
         let numberWords = 50;
 
+        // Minimum length
+        let wordLength = 3;
+
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
             this.book = join(book, " ");
@@ -27,21 +30,27 @@ function WordCloud() {
             ]);
             // Initialize array to store words and their quantinties
             this.wordCloud = [];
-
             for (let i = 0; i < this.book.length; i++) {
-                if ((this.wordCloud.find(x => x.name === this.book[i])) === undefined) {
-                    this.wordCloud.push({
-                        name: this.book[i],
-                        quantity: 1
-                    })
-                } else {
-                    this.wordCloud.find(x => x.name === this.book[i]).quantity += 1;
+                if (this.book[i].length > wordLength) {
+                    if ((this.wordCloud.find(x => x.name === this.book[i].toUpperCase())) === undefined) {
+                        this.wordCloud.push({
+                            name: this.book[i].toUpperCase(),
+                            quantity: 1
+                        })
+                    } else {
+                        this.wordCloud.find(x => x.name === this.book[i].toUpperCase()).quantity += 1;
+                    }
                 }
             };
+
+            this.monoFont;
+            this.monoFont = loadFont('assets/PTMono-Regular.ttf');
+
             this.wordCloud.sort((a, b) => b.quantity - a.quantity);
             this.wordCloud = this.wordCloud.slice(0, numberWords);
             self.loaded = true;
-        })
+        });
+
     };
 
     this.setup = function () {
@@ -51,10 +60,8 @@ function WordCloud() {
         }
 
         // Initiate min and max text size
-        this.minTextSize = 20;
-        this.maxTextSize = 200;
-
-        console.log(this.wordCloud);
+        this.minTextSize = 40;
+        this.maxTextSize = 150;
 
         this.wordColors = [];
 
@@ -64,7 +71,6 @@ function WordCloud() {
             ]);
         }
 
-        console.log(width);
     };
 
 
@@ -79,16 +85,31 @@ function WordCloud() {
         let minSize = this.wordCloud[this.wordCloud.length - 1].quantity
 
         noStroke();
+        textFont(this.monoFont);
+        let textLimits = [];
+
+
 
         for (let i = 0; i < this.wordCloud.length; i++) {
             let name = this.wordCloud[i].name
             let qty = this.wordCloud[i].quantity
+            let size = this.mapQtyToSize(qty, minSize, maxSize)
 
+            push();
+            translate(width / 2, height / 2);
             fill(this.wordColors[i]);
             textAlign(CENTER, CENTER);
-            textSize(this.mapQtyToSize(qty, minSize, maxSize));
-            text(name, width / 2, height / 2);
+            textSize(size);
+            text(name, 0, 0);
+
+            textLimits.push(this.monoFont.textBounds(name, 0, 0, size))
+
+            fill(100, 100, 100, 100);
+            rect(textLimits[i].x, textLimits[i].y, textLimits[i].w, textLimits[i].h);
+            pop();
         }
+
+        // console.log(textLimits);
 
     };
 
