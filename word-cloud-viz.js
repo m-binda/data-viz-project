@@ -25,11 +25,11 @@ function WordCloudViz() {
         this.wordCloud = [];
 
         // Initiate cloud list
-        this.cloudList = new CloudList();
+        let cloudList = new CloudList();
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
-            this.wordCloud = this.cloudList.makeCloud(book);
+            this.wordCloud = cloudList.makeCloud(book);
             self.loaded = true;
         });
 
