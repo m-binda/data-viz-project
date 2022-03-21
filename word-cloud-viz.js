@@ -18,9 +18,7 @@ function WordCloudViz() {
     this.preload = function () {
         let self = this;
 
-
-
-        // Minimum length
+        // Minimum word length
         let wordLength = 3;
 
         // Load font
@@ -28,11 +26,8 @@ function WordCloudViz() {
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
-            this.book = join(book, " ");
-            this.book = splitTokens(this.book, [
-                " ", ".", ",", "!", "?", "-", ";", ":", "(", ")",
-                "\n", "\t", "this", "that", "[_"
-            ]);
+            this.book = join(book);
+            this.book = split(this.book, " ");
             // Initialize array to store words and their quantinties
             this.wordCloud = [];
             for (let i = 0; i < this.book.length; i++) {
@@ -77,10 +72,9 @@ function WordCloudViz() {
         for (let i = 0; i < cloudQty.length; i++) {
             this.select.option(cloudQty[i]);
         }
-
     };
 
-    // Removes select element
+    // Removes select element.
     this.destroy = function () {
         this.select.remove();
     };
@@ -91,8 +85,7 @@ function WordCloudViz() {
             return;
         }
 
-
-        // How many words for the word cloud
+        // Text for the user.
         let numberWords = this.select.value();
         fill(0);
         noStroke();
@@ -100,7 +93,7 @@ function WordCloudViz() {
         textAlign(CENTER, CENTER);
         text("How many words in the cloud?", width / 2, height - this.titleHeight + 10);
 
-        // Draws the words and updates their size and position.
+        // Gets size for each word.
         for (let i = 0; i < this.wordCloud.length; i++) {
             this.wordCloud[i].updateSize(
                 this.minQty, this.maxQty,
@@ -108,6 +101,7 @@ function WordCloudViz() {
             );
         };
 
+        // Draws the words and updates their size and position.
         for (let i = 0; i < numberWords; i++) {
             push();
             translate(width / 2, height / 2);
@@ -124,7 +118,6 @@ function WordCloudViz() {
 
     // Draws the title.
     this.drawTitle = function () {
-
         this.titleHeight = 30;
         fill(0);
         noStroke();
