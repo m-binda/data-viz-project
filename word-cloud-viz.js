@@ -27,8 +27,12 @@ function WordCloudViz() {
         // Initialize array to store words and their quantinties
         this.wordCloud = [];
 
+        // Initiate cloud list
+        this.cloudList = new CloudList();
+
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
+
             let words = join(book);
             words = split(words, " ");
             for (let i = 0; i < words.length; i++) {
@@ -44,6 +48,7 @@ function WordCloudViz() {
                 }
             };
             this.wordCloud.sort((a, b) => b.quantity - a.quantity);
+
             self.loaded = true;
         });
 
