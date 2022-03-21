@@ -11,7 +11,7 @@ function WordCloudViz() {
     this.loaded = false;
 
     // Title to display above the word cloud.
-    this.title = 'Othello - William Shakespeare';
+    this.title = 'Othello - Shakespeare - Word Cloud';
 
     // Preload the data. This function is called automatically by the
     // gallery when a visualisation is added.
