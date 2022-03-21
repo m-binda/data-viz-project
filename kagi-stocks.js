@@ -86,6 +86,7 @@ function KagiStocks() {
 
     }
 
+    // Removes select element
     this.destroy = function () {
         this.select.remove();
     };
