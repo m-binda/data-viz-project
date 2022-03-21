@@ -96,11 +96,15 @@ function CloudList(book, wordFont) {
             ) {
                 push();
                 let qty = self.wordCloud[i].quantity;
-                fill(150);
+                fill(150, 150, 150, 100);
                 textSize(20);
                 textAlign(LEFT, TOP);
-                rect(mouseX, mouseY, 175, -30);
-                fill(255);
+                if (qty.toString().length > 2) {
+                    rect(mouseX, mouseY, 175, -30);
+                } else {
+                    rect(mouseX, mouseY, 168, -30);
+                }
+                fill(0);
                 text("appears " + qty + " times", mouseX + 5, mouseY - 25);
                 pop();
             }
