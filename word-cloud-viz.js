@@ -65,22 +65,25 @@ function WordCloudViz() {
             return;
         }
 
+        // Define title height
+        let titleHeight = 30;
+
         // Text for the user.
         let numberWords = this.select.value();
         fill(0);
         noStroke();
         textSize(16);
         textAlign(CENTER, CENTER);
-        text("How many words in the cloud?", width / 2, height - this.titleHeight + 10);
+        text("How many words in the cloud?", width / 2, height - titleHeight + 10);
 
         // Gets size for each word.
         this.wordCloud.updateSizes();
 
         // Draws the words and updates their size and position.
-        this.wordCloud.drawWordCloud(this.titleHeight, numberWords);
+        this.wordCloud.drawWordCloud(titleHeight, numberWords);
 
         // Draw the title above the plot.
-        this.drawTitle();
+        this.drawTitleSub(titleHeight);
 
         // Display quantity when hovering over the words.
         this.wordCloud.displayQty(mouseX, mouseY);
@@ -88,12 +91,19 @@ function WordCloudViz() {
     };
 
     // Draws the title.
-    this.drawTitle = function () {
-        this.titleHeight = 30;
+    this.drawTitleSub = function (titleHeight) {
+
+        let subtitle =
+            "Hover over the words to know how many times they appear";
+
         fill(0);
         noStroke();
         textSize(30);
         textAlign(CENTER, CENTER);
-        text(this.title, width / 2, this.titleHeight);
+        text(this.title, width / 2, titleHeight);
+
+        // Subtitle
+        textSize(16);
+        text(subtitle, width / 2, titleHeight + 20);
     };
 }

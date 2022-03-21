@@ -98,7 +98,7 @@ function WordCloud(_name) {
 
         if (self.x1 < -width / 2 ||
             self.x2 > width / 2 ||
-            self.y1 < -height / 2 + titleHeight ||
+            self.y1 < -height / 2 + titleHeight + 20 ||
             self.y2 > height / 2 - titleHeight
         ) {
             self.pos.set(0, 0);
