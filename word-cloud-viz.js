@@ -18,8 +18,7 @@ function WordCloudViz() {
     this.preload = function () {
         let self = this;
 
-        // How many words for the word cloud
-        let numberWords = 50;
+
 
         // Minimum length
         let wordLength = 3;
@@ -50,7 +49,6 @@ function WordCloudViz() {
             };
 
             this.wordCloud.sort((a, b) => b.quantity - a.quantity);
-            this.wordCloud = this.wordCloud.slice(0, numberWords);
             self.loaded = true;
         });
 
@@ -70,6 +68,16 @@ function WordCloudViz() {
         this.maxQty = this.wordCloud[0].quantity
         this.minQty = this.wordCloud[this.wordCloud.length - 1].quantity
 
+        // Create a select DOM element and its title.
+        this.select = createSelect();
+        this.select.position(width / 1.3, height);
+
+        // Fill the options with all quantities.
+        let cloudQty = [10, 20, 30, 40, 50, 60];
+        for (let i = 0; i < cloudQty.length; i++) {
+            this.select.option(cloudQty[i]);
+        }
+
     };
 
 
@@ -80,6 +88,15 @@ function WordCloudViz() {
             return;
         }
 
+
+        // How many words for the word cloud
+        let numberWords = this.select.value();
+        fill(0);
+        noStroke();
+        textSize(16);
+        textAlign(CENTER, CENTER);
+        text("How many words in the cloud?", width / 2, height - 20);
+
         // Draws the words and updates their size and position.
         for (let i = 0; i < this.wordCloud.length; i++) {
             this.wordCloud[i].updateSize(
@@ -88,7 +105,7 @@ function WordCloudViz() {
             );
         };
 
-        for (let i = 0; i < this.wordCloud.length; i++) {
+        for (let i = 0; i < numberWords; i++) {
             push();
             translate(width / 2, height / 2);
             this.wordCloud[i].updateBounds(this.wordFont);
