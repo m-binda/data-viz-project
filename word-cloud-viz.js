@@ -10,26 +10,29 @@ function WordCloudViz() {
     // Property to represent whether data has been loaded.
     this.loaded = false;
 
+    // Title to display above the word cloud.
+    this.title = 'Othello - William Shakespeare';
+
     // Preload the data. This function is called automatically by the
     // gallery when a visualisation is added.
     this.preload = function () {
         let self = this;
 
         // How many words for the word cloud
-        let numberWords = 30;
+        let numberWords = 50;
 
         // Minimum length
         let wordLength = 3;
 
         // Load font
-        this.wordFont = loadFont('assets/Roboto-Regular.ttf');
+        this.wordFont = loadFont('assets/PTMono-Regular.ttf');
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
             this.book = join(book, " ");
             this.book = splitTokens(this.book, [
                 " ", ".", ",", "!", "?", "-", ";", ":", "(", ")",
-                "\n", "\t", "this", "that"
+                "\n", "\t", "this", "that", "[_"
             ]);
             // Initialize array to store words and their quantinties
             this.wordCloud = [];
@@ -61,7 +64,7 @@ function WordCloudViz() {
 
         // Initiate min and max text size
         this.minText = 20;
-        this.maxText = 100;
+        this.maxText = 50;
 
         // Get min and max quantity
         this.maxQty = this.wordCloud[0].quantity
@@ -77,17 +80,36 @@ function WordCloudViz() {
             return;
         }
 
+        // Draws the words and updates their size and position.
         for (let i = 0; i < this.wordCloud.length; i++) {
             this.wordCloud[i].updateSize(
-                this.minQty, this.maxQty, this.minText, this.maxText);
-            this.wordCloud[i].updateBounds(this.wordFont)
+                this.minQty, this.maxQty,
+                this.minText, this.maxText
+            );
+        };
 
+        for (let i = 0; i < this.wordCloud.length; i++) {
             push();
             translate(width / 2, height / 2);
+            this.wordCloud[i].updateBounds(this.wordFont);
             this.wordCloud[i].draw(this.wordFont);
-            this.wordCloud[i].updatePos(this.wordCloud);
+            this.wordCloud[i].updatePos(this.wordCloud, this.titleHeight);
             pop();
         }
 
+        // Draw the title above the plot.
+        this.drawTitle();
+
+    };
+
+    // Draws the title.
+    this.drawTitle = function () {
+
+        this.titleHeight = 30;
+        fill(0);
+        noStroke();
+        textSize(30);
+        textAlign(CENTER, CENTER);
+        text(this.title, width / 2, this.titleHeight);
     };
 }

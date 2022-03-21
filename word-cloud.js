@@ -30,7 +30,11 @@ function WordCloud(_name) {
         text(self.name, self.pos.x, self.pos.y);
 
         // Rect for collision coordinates test
+        // noFill();
+        // stroke(0);
+        // strokeWeight(2);
         // rect(self.x1, self.y1, self.w, self.h);
+
         pop();
     }
 
@@ -50,16 +54,21 @@ function WordCloud(_name) {
         let self = this;
         let bounds = _font.textBounds(self.name, self.pos.x, self.pos.y, self.size);
 
-        self.w = bounds.w;
-        self.h = bounds.h;
+        // Variable to correct error in textBounds function.
+        // After multiples tests, I verified that this function does not
+        // return proper values, especially for smaller text sizes.
+        let bdErr = 5;
 
-        self.x1 = bounds.x - bounds.w / 2;
-        self.x2 = self.x1 + bounds.w;
-        self.y1 = bounds.y + bounds.h / 1.5;
-        self.y2 = self.y1 + bounds.h;
+        self.w = bounds.w;
+        self.h = bounds.h + 2 * bdErr;
+
+        self.x1 = bounds.x;
+        self.x2 = self.x1 + self.w;
+        self.y1 = bounds.y - bdErr;
+        self.y2 = self.y1 + self.h;
     }
 
-    this.updatePos = function (_wordCloud) {
+    this.updatePos = function (_wordCloud, titleHeight) {
 
         let self = this;
         let v = p5.Vector.random2D();
@@ -89,7 +98,7 @@ function WordCloud(_name) {
 
         if (self.x1 < -width / 2 ||
             self.x2 > width / 2 ||
-            self.y1 < -height / 2 ||
+            self.y1 < -height / 2 + titleHeight ||
             self.y2 > height / 2
         ) {
             self.pos.set(0, 0);

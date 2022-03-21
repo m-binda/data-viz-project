@@ -139,8 +139,7 @@ function KagiStocks() {
     }
 
 
-    // Draws the title. Since it is used by all files, I will later implement
-    // it as a helper function or in gallery
+    // Draws the title.
     this.drawTitle = function () {
         fill(0);
         noStroke();
