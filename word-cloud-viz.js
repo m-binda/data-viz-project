@@ -16,20 +16,20 @@ function WordCloudViz() {
         let self = this;
 
         // How many words for the word cloud
-        let numberWords = 5;
+        let numberWords = 30;
 
         // Minimum length
         let wordLength = 3;
 
         // Load font
-        this.monoFont = loadFont('assets/PTMono-Regular.ttf');
+        this.wordFont = loadFont('assets/Roboto-Regular.ttf');
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
             this.book = join(book, " ");
             this.book = splitTokens(this.book, [
                 " ", ".", ",", "!", "?", "-", ";", ":", "(", ")",
-                "\n", "\t"
+                "\n", "\t", "this", "that"
             ]);
             // Initialize array to store words and their quantinties
             this.wordCloud = [];
@@ -61,7 +61,7 @@ function WordCloudViz() {
 
         // Initiate min and max text size
         this.minText = 20;
-        this.maxText = 50;
+        this.maxText = 100;
 
         // Get min and max quantity
         this.maxQty = this.wordCloud[0].quantity
@@ -79,12 +79,12 @@ function WordCloudViz() {
 
         for (let i = 0; i < this.wordCloud.length; i++) {
             this.wordCloud[i].updateSize(
-                this.minQty, this.maxQty, this.minText, this.maxText, this.monoFont
-            );
+                this.minQty, this.maxQty, this.minText, this.maxText);
+            this.wordCloud[i].updateBounds(this.wordFont)
 
             push();
             translate(width / 2, height / 2);
-            this.wordCloud[i].draw(this.monoFont);
+            this.wordCloud[i].draw(this.wordFont);
             this.wordCloud[i].updatePos(this.wordCloud);
             pop();
         }
