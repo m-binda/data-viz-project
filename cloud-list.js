@@ -80,6 +80,7 @@ function CloudList(book, wordFont) {
             }
         }
 
+        // Set isOn to false on all words not being drawn.
         for (let i = numberWords; i < self.wordCloud.length; i++) {
             self.wordCloud[i].isOn = false;
         }
