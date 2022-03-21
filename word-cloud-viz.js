@@ -19,17 +19,16 @@ function WordCloudViz() {
         let self = this;
 
         // Load font
-        this.wordFont = loadFont('assets/PTMono-Regular.ttf');
+        let wordFont = loadFont('assets/PTMono-Regular.ttf');
 
-        // Initialize array to store words and their quantinties
-        this.wordCloud = [];
-
-        // Initiate cloud list
-        let cloudList = new CloudList();
+        // Initiate array for words to exclude from the cloud.
+        let wordsToExclude = ['this', 'that']
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
-            this.wordCloud = cloudList.makeCloud(book);
+            this.wordCloud = new CloudList(book, wordFont);
+            this.wordCloud.makeCloud();
+            this.wordCloud.excludeWords(wordsToExclude);
             self.loaded = true;
         });
 
@@ -41,28 +40,18 @@ function WordCloudViz() {
             return;
         }
 
-        // Initiate min and max text size
-        this.minText = 20;
-        this.maxText = 50;
-
-        // Get min and max quantity
-        this.maxQty = this.wordCloud[0].quantity
-        this.minQty = this.wordCloud[this.wordCloud.length - 1].quantity
-
         // Create a select DOM element and its title.
         this.select = createSelect();
         this.select.position(width / 1.3, height);
 
         // Fill the options with all quantities.
-        let cloudQty = [10, 20, 30, 40, 50, 60];
+        let cloudQty = [10, 20, 30, 40, 50];
         for (let i = 0; i < cloudQty.length; i++) {
             this.select.option(cloudQty[i]);
         }
 
         // Resets position every time user clicks on Word Cloud - Othello
-        for (let i = 0; i < this.wordCloud.length; i++) {
-            this.wordCloud[i].pos.set(0, 0);
-        }
+        this.wordCloud.resetPosition();
     };
 
     // Removes select element.
@@ -85,22 +74,10 @@ function WordCloudViz() {
         text("How many words in the cloud?", width / 2, height - this.titleHeight + 10);
 
         // Gets size for each word.
-        for (let i = 0; i < this.wordCloud.length; i++) {
-            this.wordCloud[i].updateSize(
-                this.minQty, this.maxQty,
-                this.minText, this.maxText
-            );
-        };
+        this.wordCloud.updateSizes();
 
         // Draws the words and updates their size and position.
-        for (let i = 0; i < numberWords; i++) {
-            push();
-            translate(width / 2, height / 2);
-            this.wordCloud[i].updateBounds(this.wordFont);
-            this.wordCloud[i].draw(this.wordFont);
-            this.wordCloud[i].updatePos(this.wordCloud, this.titleHeight);
-            pop();
-        }
+        this.wordCloud.drawWordCloud(this.titleHeight, numberWords);
 
         // Draw the title above the plot.
         this.drawTitle();

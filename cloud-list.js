@@ -1,27 +1,80 @@
-function CloudList() {
+function CloudList(book, wordFont) {
 
-    this.makeCloud = function (book) {
-        let words = join(book);
-        let wordCloud = [];
+    this.book = book;
+    this.wordFont = wordFont;
+
+    // Initiate array to store the word objects
+    this.wordCloud = [];
+
+    this.makeCloud = function () {
+
+        let self = this;
+        let words = join(self.book);
 
         // Minimum word length
         let wordLength = 3;
 
-        words = split(words, " ");
+        // Characters to split the string
+        let tokensSplit = [' ', ',', '.', '_', '’', '?',
+            '!', ':', ';', '-'
+        ]
+        words = splitTokens(words, tokensSplit);
         for (let i = 0; i < words.length; i++) {
             if (words[i].length > wordLength) {
-                if ((wordCloud.find(x => x.name === words[i].toUpperCase())) === undefined) {
+                if ((self.wordCloud.find(x => x.name === words[i].toUpperCase())) === undefined) {
                     let word = new WordCloud(
                         words[i].toUpperCase()
                     );
-                    wordCloud.push(word)
+                    self.wordCloud.push(word)
                 } else {
-                    wordCloud.find(x => x.name === words[i].toUpperCase()).quantity += 1;
+                    self.wordCloud.find(x => x.name === words[i].toUpperCase()).quantity += 1;
                 }
             }
         };
-        wordCloud.sort((a, b) => b.quantity - a.quantity);
+        self.wordCloud.sort((a, b) => b.quantity - a.quantity);
+    };
 
-        return wordCloud;
+    this.excludeWords = function (wordsToExclude) {
+        let self = this;
+        for (let i = 0; i < self.wordCloud.length; i++) {
+            for (let j = 0; j < wordsToExclude.length; j++) {
+                if (
+                    self.wordCloud[i].name == wordsToExclude[j].toUpperCase()
+                ) {
+                    self.wordCloud.splice(i, 1);;
+                }
+            }
+        }
+    };
+
+    this.resetPosition = function () {
+        let self = this;
+        for (let i = 0; i < self.wordCloud.length; i++) {
+            self.wordCloud[i].pos.set(0, 0);
+        }
     }
+
+    this.updateSizes = function (minText = 20, maxText = 50) {
+        let self = this;
+        let minQty = self.wordCloud[self.wordCloud.length - 1].quantity;
+        let maxQty = self.wordCloud[0].quantity;
+
+        for (let i = 0; i < self.wordCloud.length; i++) {
+            self.wordCloud[i].updateSize(
+                minQty, maxQty, minText, maxText
+            );
+        };
+    };
+
+    this.drawWordCloud = function (titleHeight, numberWords) {
+        let self = this;
+        for (let i = 0; i < numberWords; i++) {
+            push();
+            translate(width / 2, height / 2);
+            self.wordCloud[i].updateBounds(self.wordFont);
+            self.wordCloud[i].draw(self.wordFont);
+            self.wordCloud[i].updatePos(self.wordCloud, titleHeight);
+            pop();
+        }
+    };
 }
