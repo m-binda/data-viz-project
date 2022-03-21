@@ -72,6 +72,10 @@ function WordCloudViz() {
         for (let i = 0; i < cloudQty.length; i++) {
             this.select.option(cloudQty[i]);
         }
+
+        for (let i = 0; i < this.wordCloud.length; i++) {
+            this.wordCloud[i].pos.set(0, 0);
+        }
     };
 
     // Removes select element.
