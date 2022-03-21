@@ -45,7 +45,7 @@ function WordCloudViz() {
         this.select.position(width / 1.3, height);
 
         // Fill the options with all quantities.
-        let cloudQty = [10, 20, 30, 40, 50];
+        let cloudQty = [20, 30, 40, 50];
         for (let i = 0; i < cloudQty.length; i++) {
             this.select.option(cloudQty[i]);
         }
@@ -81,6 +81,9 @@ function WordCloudViz() {
 
         // Draw the title above the plot.
         this.drawTitle();
+
+        // Display quantity when hovering over the words.
+        this.wordCloud.displayQty(mouseX, mouseY);
 
     };
 

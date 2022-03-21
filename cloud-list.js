@@ -73,8 +73,38 @@ function CloudList(book, wordFont) {
             translate(width / 2, height / 2);
             self.wordCloud[i].updateBounds(self.wordFont);
             self.wordCloud[i].draw(self.wordFont);
-            self.wordCloud[i].updatePos(self.wordCloud, titleHeight);
+            self.wordCloud[i].updatePos(self.wordCloud, titleHeight + 10);
             pop();
         }
     };
+
+    this.displayQty = function (mouseX, mouseY) {
+        let self = this;
+
+        for (let i = 0; i < self.wordCloud.length; i++) {
+
+            let x1 = self.wordCloud[i].x1 + width / 2;
+            let x2 = self.wordCloud[i].x2 + width / 2;
+            let y1 = self.wordCloud[i].y1 + height / 2;
+            let y2 = self.wordCloud[i].y2 + height / 2;
+
+            if (
+                mouseX > x1 &&
+                mouseX < x2 &&
+                mouseY > y1 &&
+                mouseY < y2
+            ) {
+                push();
+                let qty = self.wordCloud[i].quantity;
+                fill(150);
+                textSize(20);
+                textAlign(LEFT, TOP);
+                rect(mouseX, mouseY, 175, -30);
+                fill(255);
+                text("appears " + qty + " times", mouseX + 5, mouseY - 25);
+                pop();
+            }
+
+        }
+    }
 }

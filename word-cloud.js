@@ -29,7 +29,7 @@ function WordCloud(_name) {
         textSize(self.size);
         text(self.name, self.pos.x, self.pos.y);
 
-        // Rect for collision coordinates test
+        // Rect for collision tests
         // noFill();
         // stroke(0);
         // strokeWeight(2);
@@ -64,7 +64,7 @@ function WordCloud(_name) {
 
         self.x1 = bounds.x;
         self.x2 = self.x1 + self.w;
-        self.y1 = bounds.y - bdErr;
+        self.y1 = bounds.y + bdErr;
         self.y2 = self.y1 + self.h;
     }
 
