@@ -130,3 +130,43 @@ function drawXAxisTickLabel(value, layout, mapFunction) {
   }
 
 }
+
+function drawXAxisTickKagi(layout, widthProportion, kagiValues) {
+
+  for (let i = 0; i < kagiValues.length; i++) {
+    let x = layout.leftMargin + (widthProportion * (i - 1));
+    let y = layout.bottomMargin + ((layout.marginSize * 1.3) * (i % 4 / 3));
+    let xGrid = layout.leftMargin + (widthProportion * i);
+
+    fill(0);
+    noStroke();
+    textAlign('center', 'center');
+    textSize(15);
+
+    // Add tick label, skipping one every three.
+    if (i % 2 !== 0) {
+      // Writes the text and rotates it
+      push();
+      translate(x, y);
+      rotate(HALF_PI - 1.3);
+      text(kagiValues[i][0], 0, 0);
+      pop();
+
+      // Draws the line connecting the date to the graph
+      stroke(155);
+      strokeWeight(0.5);
+      line(x, y - 10, x, layout.bottomMargin)
+    }
+
+
+    if (layout.grid) {
+      // Add grid line.
+      stroke(220);
+      strokeWeight(1)
+      line(xGrid,
+        layout.topMargin,
+        xGrid,
+        layout.bottomMargin);
+    }
+  }
+}

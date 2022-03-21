@@ -1,4 +1,6 @@
-function KagiChart() {
+function KagiChart(data) {
+
+    this.data = data
 
     this.getSeries = function (data, companyName) {
 
@@ -18,11 +20,11 @@ function KagiChart() {
         return series;
     };
 
-    this.makeKagi = function (data, companyName = "Apple") {
+    this.makeKagi = function (companyName = "Apple") {
 
         self = this;
 
-        let series = self.getSeries(data, companyName);
+        let series = self.getSeries(self.data, companyName);
 
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
@@ -242,5 +244,5 @@ function KagiChart() {
                 }
             }
         }
-    }
+    };
 }

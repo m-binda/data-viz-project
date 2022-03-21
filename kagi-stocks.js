@@ -32,9 +32,7 @@ function KagiStocks() {
         // Boolean to enable/disable background grid.
         grid: true,
 
-        // Number of axis tick labels to draw so that they are not drawn on
-        // top of one another.
-        numXTickLabels: 10,
+        // Number of axis tick labels to draw
         numYTickLabels: 8,
     };
 
@@ -55,9 +53,6 @@ function KagiStocks() {
 
     };
 
-    this.kagiChart = new KagiChart();
-
-
     this.setup = function () {
         if (!this.loaded) {
             console.log('Data not yet loaded');
@@ -75,15 +70,6 @@ function KagiStocks() {
         for (let i = 1; i < companies.length; i++) {
             this.select.option(companies[i]);
         }
-
-        this.kagiValues = this.kagiChart.makeKagi(this.data);
-
-        // Since the Kagi chart does not care about proportional dates
-        // in the x axis but only with changing trends, any value in the 
-        // series must be equidistant in the graph.
-        this.widthProportion = (this.layout.rightMargin - this.layout.leftMargin) /
-            this.kagiValues.length;
-
     }
 
     // Removes select element
@@ -102,22 +88,22 @@ function KagiStocks() {
         // select item.
         let companyName = this.select.value();
 
-        this.kagiValues = this.kagiChart.makeKagi(this.data, companyName);
+        this.kagiChart = new KagiChart(this.data);
+
+        this.kagiValues = this.kagiChart.makeKagi(companyName);
 
         // Since the Kagi chart does not care about proportional dates
         // in the x axis but only with changing trends, any value in the 
         // series must be equidistant in the graph.
-        this.widthProportion = (this.layout.rightMargin - this.layout.leftMargin) /
+        this.widthProportion =
+            (this.layout.rightMargin - this.layout.leftMargin) /
             this.kagiValues.length;
 
         // Draw the title above the plot
         this.drawTitle();
 
-        // Currently drawing x ticks on top of each other.
-        // Cannot be skipped because the way the Kagi chart is calculated, so I 
-        // must find another solution.
-        this.drawXAxisTickLabelStock();
-
+        // Draw X axis ticks
+        drawXAxisTickKagi(this.layout, this.widthProportion, this.kagiValues)
 
         // Calculate min and max stock values
         this.minStockValue = 99999;
@@ -150,49 +136,6 @@ function KagiStocks() {
             (this.layout.plotWidth() / 2) + this.layout.leftMargin,
             this.layout.topMargin - (this.layout.marginSize / 2));
     };
-
-    // This function is similar to the one in helper-functions.js
-    // but it writes the full date based on the day of the year.
-    // I plan to adapt the main function later and unify them.
-    this.drawXAxisTickLabelStock = function () {
-
-        for (let i = 0; i < this.kagiValues.length; i++) {
-            let x = this.layout.leftMargin + (this.widthProportion * (i - 1));
-            let y = this.layout.bottomMargin + ((this.layout.marginSize * 1.3) * (i % 4 / 3));
-            let xGrid = this.layout.leftMargin + (this.widthProportion * i);
-
-            fill(0);
-            noStroke();
-            textAlign('center', 'center');
-            textSize(15);
-
-            // Add tick label, skipping one every three.
-            if (i % 2 !== 0) {
-                // Writes the text and rotates it
-                push();
-                translate(x, y);
-                rotate(HALF_PI - 1.3);
-                text(this.kagiValues[i][0], 0, 0);
-                pop();
-
-                // Draws the line connecting the date to the graph
-                stroke(155);
-                strokeWeight(0.5);
-                line(x, y - 10, x, this.layout.bottomMargin)
-            }
-
-
-            if (this.layout.grid) {
-                // Add grid line.
-                stroke(220);
-                strokeWeight(1)
-                line(xGrid,
-                    this.layout.topMargin,
-                    xGrid,
-                    this.layout.bottomMargin);
-            }
-        }
-    }
 
     this.mapStockToHeight = function (value) {
         return map(value,
