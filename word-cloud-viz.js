@@ -16,7 +16,7 @@ function WordCloudViz() {
         let self = this;
 
         // How many words for the word cloud
-        let numberWords = 20;
+        let numberWords = 5;
 
         // Minimum length
         let wordLength = 3;
@@ -84,10 +84,8 @@ function WordCloudViz() {
 
             push();
             translate(width / 2, height / 2);
-            // this.wordCloud[i].pos = createVector(i * 90, i * 90)
             this.wordCloud[i].draw(this.monoFont);
             this.wordCloud[i].updatePos(this.wordCloud);
-
             pop();
         }
 

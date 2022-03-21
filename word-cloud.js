@@ -11,6 +11,7 @@ function WordCloud(_name) {
     this.y2 = 0;
     this.wordColor = [random(0, 255), random(0, 255), random(0, 255)];
 
+
     this.dir = createVector(0, 0);
 
     this.draw = function (_font) {
@@ -48,6 +49,7 @@ function WordCloud(_name) {
     this.updatePos = function (_wordCloud) {
 
         let self = this;
+        let v = p5.Vector.random2D();
 
         self.dir.set(0, 0);
 
@@ -60,38 +62,28 @@ function WordCloud(_name) {
                 let otherY2 = _wordCloud[i].y2;
 
                 if (
-                    self.x1 < otherX2 + 20 &&
-                    self.x2 + 20 > otherX1 &&
-                    self.y1 < otherY2 + 20 &&
-                    self.y2 + 20 > otherY1
+                    self.x1 < otherX2 &&
+                    self.x2 > otherX1 &&
+                    self.y1 < otherY2 &&
+                    self.y2 > otherY1
                 ) {
-                    this.dir.add(p5.Vector.random2D());
+
+                    self.dir.add(v);
                 }
-
-
-                // var v = p5.Vector.sub(this.pos, _bubbles[i].pos);
-                // var d = v.mag();
-
-
-
-                // if (d < this.size / 2 + _bubbles[i].size / 2) {
-                //     if (d > 0) {
-
-                //         this.direction.add(v)
-                //     } else {
-                //         this.direction.add(p5.Vector.random2D());
-
-                //     }
-                // }
-
             }
         }
-
         _wordCloud[0].pos = createVector(0, 0);
         self.dir.normalize();
         self.dir.mult(20);
         self.pos.add(self.dir);
+
+        if (
+            self.x1 < -width / 2 ||
+            self.x2 > width / 2 ||
+            self.y1 < -height / 2 ||
+            self.y2 > height / 2
+        ) {
+            self.pos.set(0, 0);
+        }
     }
-
-
 }
