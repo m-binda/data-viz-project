@@ -69,12 +69,19 @@ function CloudList(book, wordFont) {
     this.drawWordCloud = function (titleHeight, numberWords) {
         let self = this;
         for (let i = 0; i < numberWords; i++) {
-            push();
-            translate(width / 2, height / 2);
-            self.wordCloud[i].updateBounds(self.wordFont);
-            self.wordCloud[i].draw(self.wordFont);
-            self.wordCloud[i].updatePos(self.wordCloud, titleHeight + 10);
-            pop();
+            self.wordCloud[i].isOn = true;
+            if (self.wordCloud[i].isOn) {
+                push();
+                translate(width / 2, height / 2);
+                self.wordCloud[i].updateBounds(self.wordFont);
+                self.wordCloud[i].draw(self.wordFont);
+                self.wordCloud[i].updatePos(self.wordCloud, titleHeight + 10);
+                pop();
+            }
+        }
+
+        for (let i = numberWords; i < self.wordCloud.length; i++) {
+            self.wordCloud[i].isOn = false;
         }
     };
 
@@ -88,27 +95,28 @@ function CloudList(book, wordFont) {
             let y1 = self.wordCloud[i].y1 + height / 2;
             let y2 = self.wordCloud[i].y2 + height / 2;
 
-            if (
-                mouseX > x1 &&
-                mouseX < x2 &&
-                mouseY > y1 &&
-                mouseY < y2
-            ) {
-                push();
-                let qty = self.wordCloud[i].quantity;
-                fill(150, 150, 150, 100);
-                textSize(20);
-                textAlign(LEFT, TOP);
-                if (qty.toString().length > 2) {
-                    rect(mouseX, mouseY, 175, -30);
-                } else {
-                    rect(mouseX, mouseY, 168, -30);
+            if (self.wordCloud[i].isOn) {
+                if (
+                    mouseX > x1 &&
+                    mouseX < x2 &&
+                    mouseY > y1 &&
+                    mouseY < y2
+                ) {
+                    push();
+                    let qty = self.wordCloud[i].quantity;
+                    fill(150, 150, 150, 100);
+                    textSize(20);
+                    textAlign(LEFT, TOP);
+                    if (qty.toString().length > 2) {
+                        rect(mouseX, mouseY, 175, -30);
+                    } else {
+                        rect(mouseX, mouseY, 168, -30);
+                    }
+                    fill(0);
+                    text("appears " + qty + " times", mouseX + 5, mouseY - 25);
+                    pop();
                 }
-                fill(0);
-                text("appears " + qty + " times", mouseX + 5, mouseY - 25);
-                pop();
             }
-
         }
     }
 }

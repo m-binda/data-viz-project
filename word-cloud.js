@@ -8,10 +8,13 @@ function WordCloud(_name) {
     this.h = 0;
     this.wordColor = [random(0, 255), random(0, 255), random(0, 255)];
 
+    // Check if the word is on the screen
+    this.isOn = false;
+
     // Initiate variables for collision checks
     this.x1 = 0;
     this.x2 = 0;
-    this.y1 = 0
+    this.y1 = 0;
     this.y2 = 0;
 
     // Variable for changes in position when collision occurs
