@@ -18,9 +18,6 @@ function WordCloudViz() {
     this.preload = function () {
         let self = this;
 
-        // Minimum word length
-        let wordLength = 3;
-
         // Load font
         this.wordFont = loadFont('assets/PTMono-Regular.ttf');
 
@@ -32,23 +29,7 @@ function WordCloudViz() {
 
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
-
-            let words = join(book);
-            words = split(words, " ");
-            for (let i = 0; i < words.length; i++) {
-                if (words[i].length > wordLength) {
-                    if ((this.wordCloud.find(x => x.name === words[i].toUpperCase())) === undefined) {
-                        let word = new WordCloud(
-                            words[i].toUpperCase()
-                        );
-                        this.wordCloud.push(word)
-                    } else {
-                        this.wordCloud.find(x => x.name === words[i].toUpperCase()).quantity += 1;
-                    }
-                }
-            };
-            this.wordCloud.sort((a, b) => b.quantity - a.quantity);
-
+            this.wordCloud = this.cloudList.makeCloud(book);
             self.loaded = true;
         });
 
