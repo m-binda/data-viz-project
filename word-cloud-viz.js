@@ -24,25 +24,25 @@ function WordCloudViz() {
         // Load font
         this.wordFont = loadFont('assets/PTMono-Regular.ttf');
 
+        // Initialize array to store words and their quantinties
+        this.wordCloud = [];
+
         // Loads the book and creates an array with all the words
         loadStrings('./data/word-cloud/othello.txt', (book) => {
-            this.book = join(book);
-            this.book = split(this.book, " ");
-            // Initialize array to store words and their quantinties
-            this.wordCloud = [];
-            for (let i = 0; i < this.book.length; i++) {
-                if (this.book[i].length > wordLength) {
-                    if ((this.wordCloud.find(x => x.name === this.book[i].toUpperCase())) === undefined) {
+            let words = join(book);
+            words = split(words, " ");
+            for (let i = 0; i < words.length; i++) {
+                if (words[i].length > wordLength) {
+                    if ((this.wordCloud.find(x => x.name === words[i].toUpperCase())) === undefined) {
                         let word = new WordCloud(
-                            this.book[i].toUpperCase()
+                            words[i].toUpperCase()
                         );
                         this.wordCloud.push(word)
                     } else {
-                        this.wordCloud.find(x => x.name === this.book[i].toUpperCase()).quantity += 1;
+                        this.wordCloud.find(x => x.name === words[i].toUpperCase()).quantity += 1;
                     }
                 }
             };
-
             this.wordCloud.sort((a, b) => b.quantity - a.quantity);
             self.loaded = true;
         });
@@ -73,6 +73,7 @@ function WordCloudViz() {
             this.select.option(cloudQty[i]);
         }
 
+        // Resets position every time user clicks on Word Cloud - Othello
         for (let i = 0; i < this.wordCloud.length; i++) {
             this.wordCloud[i].pos.set(0, 0);
         }
