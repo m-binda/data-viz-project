@@ -98,7 +98,7 @@ function WordCloudViz() {
         noStroke();
         textSize(16);
         textAlign(CENTER, CENTER);
-        text("How many words in the cloud?", width / 2, height - 20);
+        text("How many words in the cloud?", width / 2, height - this.titleHeight + 10);
 
         // Draws the words and updates their size and position.
         for (let i = 0; i < this.wordCloud.length; i++) {
