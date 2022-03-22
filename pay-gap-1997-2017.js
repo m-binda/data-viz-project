@@ -72,12 +72,11 @@ function PayGapTimeSeries() {
     this.endYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
 
     // Find min and max pay gap for mapping to canvas height.
-    this.minPayGap = 0;         // Pay equality (zero pay gap).
+    this.minPayGap = 0; // Pay equality (zero pay gap).
     this.maxPayGap = max(this.data.getColumn('pay_gap'));
   };
 
-  this.destroy = function () {
-  };
+  this.destroy = function () {};
 
   this.draw = function () {
     if (!this.loaded) {
@@ -134,7 +133,7 @@ function PayGapTimeSeries() {
 
         // Draw the tick label marking the start of the previous year.
         if (i % xLabelSkip == 0) {
-          drawXAxisTickLabel(previous.year, this.layout,
+          drawXAxisTickNumber(previous.year, this.layout,
             this.mapYearToWidth.bind(this));
         }
       }
@@ -160,7 +159,7 @@ function PayGapTimeSeries() {
     return map(value,
       this.startYear,
       this.endYear,
-      this.layout.leftMargin,   // Draw left-to-right from margin.
+      this.layout.leftMargin, // Draw left-to-right from margin.
       this.layout.rightMargin);
   };
 
@@ -169,6 +168,6 @@ function PayGapTimeSeries() {
       this.minPayGap,
       this.maxPayGap,
       this.layout.bottomMargin, // Smaller pay gap at bottom.
-      this.layout.topMargin);   // Bigger pay gap at top.
+      this.layout.topMargin); // Bigger pay gap at top.
   };
 }

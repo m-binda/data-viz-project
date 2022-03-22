@@ -106,7 +106,7 @@ function drawYAxisTickLabels(min, max, layout, mapFunction,
   }
 }
 
-function drawXAxisTickLabel(value, layout, mapFunction) {
+function drawXAxisTickNumber(value, layout, mapFunction) {
   // Map function must be passed with .bind(this).
   var x = mapFunction(value);
 
@@ -131,7 +131,7 @@ function drawXAxisTickLabel(value, layout, mapFunction) {
 
 }
 
-function drawXAxisTickKagi(layout, widthProportion, kagiValues) {
+function drawXAxisTickDate(layout, widthProportion, kagiValues) {
 
   for (let i = 0; i < kagiValues.length; i++) {
     let x = layout.leftMargin + (widthProportion * (i - 1));

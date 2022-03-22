@@ -103,7 +103,7 @@ function KagiStocks() {
         this.drawTitle();
 
         // Draw X axis ticks
-        drawXAxisTickKagi(this.layout, this.widthProportion, this.kagiValues)
+        drawXAxisTickDate(this.layout, this.widthProportion, this.kagiValues)
 
         // Calculate min and max stock values
         this.minStockValue = 99999;

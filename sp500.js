@@ -189,7 +189,7 @@ function SP500() {
             // let xLabelSkip = ceil(numMonths / this.layout.numXTickLabels);
 
             y = this.startMonth + i;
-            drawXAxisTickLabel(y, this.layout,
+            drawXAxisTickNumber(y, this.layout,
                 this.mapMonthToWidth.bind(this));
             // Draw the tick label marking the start of the previous month.
             // if (i % xLabelSkip == 0) {

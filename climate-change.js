@@ -182,7 +182,7 @@ function ClimateChange() {
 
         // Draw the tick label marking the start of the previous year.
         if (yearCount % xLabelSkip == 0) {
-          drawXAxisTickLabel(previous.year, this.layout,
+          drawXAxisTickNumber(previous.year, this.layout,
             this.mapYearToWidth.bind(this));
         }
 
@@ -190,7 +190,7 @@ function ClimateChange() {
         // year x tick label.
         if ((numYears <= 6 &&
             yearCount == numYears - 1)) {
-          drawXAxisTickLabel(current.year, this.layout,
+          drawXAxisTickNumber(current.year, this.layout,
             this.mapYearToWidth.bind(this));
         }
 

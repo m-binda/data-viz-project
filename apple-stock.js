@@ -130,7 +130,7 @@ function AppleStock() {
             // Map y position of each month
             let current_month = this.mapMonthToWidth(this.series[i][0]);
 
-            drawXAxisTickLabel(this.series[i][0], this.layout, this.mapMonthToWidth.bind(this));
+            drawXAxisTickNumber(this.series[i][0], this.layout, this.mapMonthToWidth.bind(this));
 
             close_value = this.mapStockValueToHeight(close_value);
             open_value = this.mapStockValueToHeight(open_value);
