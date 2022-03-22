@@ -74,7 +74,7 @@ function WordCloudViz() {
         noStroke();
         textSize(16);
         textAlign(CENTER, CENTER);
-        text("How many words in the cloud?", width / 2, height - titleHeight + 10);
+        text("How many words do you want in the cloud?", width / 2, height - titleHeight + 10);
 
         // Gets size for each word.
         this.wordCloud.updateSizes();
@@ -94,7 +94,7 @@ function WordCloudViz() {
     this.drawTitleSub = function (titleHeight) {
 
         let subtitle =
-            "Hover over the words to know how many times they appear";
+            "Hover over the words to know how many times each word appears";
 
         fill(0);
         noStroke();
