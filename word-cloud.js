@@ -107,4 +107,9 @@ function WordCloud(_name) {
             self.pos.set(0, 0);
         }
     }
+
+    this.resetPosition = function () {
+        let self = this;
+        self.pos.set(0, 0);
+    }
 }

@@ -51,7 +51,7 @@ function WordCloudViz() {
         }
 
         // Resets position every time user clicks on Word Cloud - Othello
-        this.wordCloud.resetPosition();
+        this.wordCloud.resetPositions();
     };
 
     // Removes select element.

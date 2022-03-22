@@ -43,33 +43,35 @@ function KagiStocks() {
     // gallery when a visualisation is added.
     this.preload = function () {
         let self = this;
-        this.data = loadTable(
+        loadTable(
             './data/kagi-stock/HistoricalData.csv', 'csv', 'header',
             // Callback function to set the value
             // this.loaded to true.
-            function (table) {
+            (table) => {
+                this.kagiChart = new KagiChart(table);
                 self.loaded = true;
             });
-
     };
 
     this.setup = function () {
         if (!this.loaded) {
             console.log('Data not yet loaded');
             return;
-        }
+        };
+
+        textSize(15);
 
         // Create a select DOM element.
         this.select = createSelect();
         this.select.position(width / 1.4, height);
 
         // Fill the options with all company names.
-        let companies = this.data.columns;
+        let companies = this.kagiChart.getCompanies();
 
         // First entry is empty.
         for (let i = 1; i < companies.length; i++) {
             this.select.option(companies[i]);
-        }
+        };
     }
 
     // Removes select element
@@ -88,14 +90,12 @@ function KagiStocks() {
         // select item.
         let companyName = this.select.value();
 
-        this.kagiChart = new KagiChart(this.data);
-
         this.kagiValues = this.kagiChart.makeKagi(companyName);
 
         // Since the Kagi chart does not care about proportional dates
         // in the x axis but only with changing trends, any value in the 
         // series must be equidistant in the graph.
-        this.widthProportion =
+        let widthProportion =
             (this.layout.rightMargin - this.layout.leftMargin) /
             this.kagiValues.length;
 
@@ -103,7 +103,7 @@ function KagiStocks() {
         this.drawTitle();
 
         // Draw X axis ticks
-        drawXAxisTickDate(this.layout, this.widthProportion, this.kagiValues)
+        drawXAxisTickFullDate(this.layout, widthProportion, this.kagiValues)
 
         // Calculate min and max stock values
         this.minStockValue = 99999;
@@ -121,7 +121,7 @@ function KagiStocks() {
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
             this.layout, this.mapStockToHeight.bind(this));
 
-        this.kagiChart.draw(this.kagiValues, this.layout, this.widthProportion, this.mapStockToHeight.bind(this));
+        this.kagiChart.draw(this.kagiValues, this.layout, widthProportion, this.mapStockToHeight.bind(this));
 
     }
 

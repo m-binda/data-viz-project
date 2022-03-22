@@ -47,10 +47,10 @@ function CloudList(book, wordFont) {
         }
     };
 
-    this.resetPosition = function () {
+    this.resetPositions = function () {
         let self = this;
         for (let i = 0; i < self.wordCloud.length; i++) {
-            self.wordCloud[i].pos.set(0, 0);
+            self.wordCloud[i].resetPosition();
         }
     }
 

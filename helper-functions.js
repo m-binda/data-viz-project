@@ -131,9 +131,9 @@ function drawXAxisTickNumber(value, layout, mapFunction) {
 
 }
 
-function drawXAxisTickDate(layout, widthProportion, kagiValues) {
+function drawXAxisTickFullDate(layout, widthProportion, values) {
 
-  for (let i = 0; i < kagiValues.length; i++) {
+  for (let i = 0; i < values.length; i++) {
     let x = layout.leftMargin + (widthProportion * (i - 1));
     let y = layout.bottomMargin + ((layout.marginSize * 1.3) * (i % 4 / 3));
     let xGrid = layout.leftMargin + (widthProportion * i);
@@ -141,7 +141,7 @@ function drawXAxisTickDate(layout, widthProportion, kagiValues) {
     fill(0);
     noStroke();
     textAlign('center', 'center');
-    textSize(15);
+
 
     // Add tick label, skipping one every three.
     if (i % 2 !== 0) {
@@ -149,7 +149,7 @@ function drawXAxisTickDate(layout, widthProportion, kagiValues) {
       push();
       translate(x, y);
       rotate(HALF_PI - 1.3);
-      text(kagiValues[i][0], 0, 0);
+      text(values[i][0], 0, 0);
       pop();
 
       // Draws the line connecting the date to the graph

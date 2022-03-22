@@ -1,58 +1,33 @@
-function KagiChart(data) {
+function KagiCompany() {
 
-    this.data = data;
+    // Initiate the array for the values that matter to the Kagi chart
+    this.kagiValues = [];
 
-    this.getSeries = function (data, companyName) {
-
-        // Initiate variables for the series.
-        let series = [];
-
-        // Populates the series array with all information in the data
-        for (let i = 0; i < data.getRowCount(); i++) {
-            let dateString = data.getColumn(0)[i];
-            let close = float(data.getColumn(companyName)[i]);
-            series[i] = [dateString, close];
-        };
-
-        return series;
-    };
-
-    this.getCompanies = function () {
-        let self = this;
-        return self.data.columns;
-    };
-
-    this.makeKagi = function (companyName = "Apple") {
+    this.getKagiValues = function (companyData) {
 
         self = this;
-
-        let series = self.getSeries(self.data, companyName);
 
         // Populates the kagiValues with dates and prices that
         // break the current trend according to the currently established 
         // percentage.
-
-        // Initiate the array for the values that matter to the Kagi chart
-        let kagiValues = [];
 
         // Initiate the value for the minimum percentage change to alter
         // the line trend in the Kagi chart
         let priceVar = 1.01;
         let kNextPos = 0;
 
-
         // Adds the first and second value to calculate the trend later
         // Adds the first value
-        kagiValues.push(series[0]);
+        self.kagiValues.push(companyData[0]);
 
         // Adds second value based on priceVar
-        for (let i = 0; i < series.length; i++) {
-            let l = kagiValues.length
+        for (let i = 0; i < companyData.length; i++) {
+            let l = self.kagiValues.length
             if (
-                series[i][1] > (kagiValues[l - 1][1] * priceVar) ||
-                series[i][1] < (kagiValues[l - 1][1] * (2 - priceVar))
+                companyData[i][1] > (self.kagiValues[l - 1][1] * priceVar) ||
+                companyData[i][1] < (self.kagiValues[l - 1][1] * (2 - priceVar))
             ) {
-                kagiValues.push(series[i]);
+                self.kagiValues.push(companyData[i]);
                 kNextPos = i + 1; // Adjust position for next loop
                 break
             }
@@ -60,35 +35,33 @@ function KagiChart(data) {
 
         // Adds subsequent values according to changes in trend.
         // Compares each time to the previous two values
-        for (let i = kNextPos; i < series.length; i++) {
+        for (let i = kNextPos; i < companyData.length; i++) {
 
-            let l = kagiValues.length;
+            let l = self.kagiValues.length;
 
             // If the current trend is negative
-            if (kagiValues[l - 2][1] < kagiValues[l - 1][1]) {
+            if (self.kagiValues[l - 2][1] < self.kagiValues[l - 1][1]) {
                 // Replaces the current minimum value
-                if (kagiValues[l - 1][1] < series[i][1]) {
-                    kagiValues[l - 1] = series[i];
+                if (self.kagiValues[l - 1][1] < companyData[i][1]) {
+                    self.kagiValues[l - 1] = companyData[i];
                 }
                 // Adds new value if trend changes
-                else if (kagiValues[l - 1][1] * (2 - priceVar) > series[i][1]) {
-                    kagiValues.push(series[i]);
+                else if (self.kagiValues[l - 1][1] * (2 - priceVar) > companyData[i][1]) {
+                    self.kagiValues.push(companyData[i]);
                 }
             }
             // If the current trend is positive
             else {
                 // Replaces the current maximum value
-                if (kagiValues[l - 1][1] > series[i][1]) {
-                    kagiValues[l - 1] = series[i];
+                if (self.kagiValues[l - 1][1] > companyData[i][1]) {
+                    self.kagiValues[l - 1] = companyData[i];
                 }
                 // Adds new value if trend changes
-                else if (kagiValues[l - 1][1] * priceVar < series[i][1]) {
-                    kagiValues.push(series[i]);
+                else if (self.kagiValues[l - 1][1] * priceVar < companyData[i][1]) {
+                    self.kagiValues.push(companyData[i]);
                 }
             }
         }
-
-        return kagiValues;
     };
 
     this.draw = function (_kagiValues, layout, widthProportion, mapFunction) {
