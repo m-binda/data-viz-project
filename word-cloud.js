@@ -1,5 +1,12 @@
 class WordCloud {
+	/**
+	 * Description. WordCloud is class used to store words and their
+	 * coordinates for resizing and collision detection for word clouds.
+	 *
+	 * @class
+	 */
 	constructor(_name) {
+		// Initiate variables for name and initial coordinates
 		this.name = _name;
 		this.quantity = 1;
 		this.size = 0;
@@ -22,6 +29,7 @@ class WordCloud {
 	}
 
 	draw = function (_font) {
+		// Draws the word on the scren
 		push();
 		noStroke();
 		textFont(_font);
@@ -40,15 +48,19 @@ class WordCloud {
 	};
 
 	updateSize = function (minQty, maxQty, minText, maxText) {
+		// Updates the size according to the number of times the word appears.
 		this.size = map(this.quantity, minQty, maxQty, minText, maxText);
 	};
 
 	updateBounds = function (_font) {
+		// Update x, y coordinates
+
 		let bounds = _font.textBounds(this.name, this.pos.x, this.pos.y, this.size);
 
-		// Variable to correct error in textBounds function.
-		// After multiples tests, I verified that this function does not
-		// return proper values, especially for smaller text sizes.
+		/* Variable to correct error in textBounds function.
+		 * After multiples tests, I verified that this function does not
+		 * return proper values, especially for smaller text sizes.
+		 * */
 		let bdErr = 5;
 
 		this.w = bounds.w;
@@ -61,10 +73,14 @@ class WordCloud {
 	};
 
 	updatePos = function (_wordCloud, titleHeight) {
+		// Updates position on collision
+
 		let v = p5.Vector.random2D();
 
+		// Resets the direction vector
 		this.dir.set(0, 0);
 
+		// Update position based on other words
 		for (var i = 0; i < _wordCloud.length; i++) {
 			if (_wordCloud[i].name != this.name) {
 				if (
@@ -81,8 +97,11 @@ class WordCloud {
 		this.dir.normalize();
 		this.dir.mult(40);
 		this.pos.add(this.dir);
+
+		// Resets first word of the list always to the center.
 		_wordCloud[0].pos.set(0, 0);
 
+		// If the words is out of the screen, resets position.
 		if (
 			this.x1 < -width / 2 ||
 			this.x2 > width / 2 ||

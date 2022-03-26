@@ -1,4 +1,13 @@
 class KagiCompany {
+	/**
+	 * KagiCompany is a class that gets data from the stock value of a certain
+	 * period for a certain company and mainly calculates the values that matter
+	 * for a Kagi chart.
+	 *
+	 * @class
+	 */
+
+	// Initiate private variables.
 	#companyName;
 	#kagiValues;
 	constructor(companyName) {
@@ -6,10 +15,12 @@ class KagiCompany {
 		this.#kagiValues = [];
 	}
 
+	// Returns the name of the company.
 	get companyName() {
 		return this.#companyName;
 	}
 
+	// Return how many dates were stored in the object.
 	get length() {
 		return this.#kagiValues.length;
 	}
@@ -28,6 +39,7 @@ class KagiCompany {
 	}
 
 	getMaxValue = function () {
+		// Gets the maximum value that the stock achieved that period.
 		let maxStockValue = 0;
 		for (let i = 0; i < this.#kagiValues.length; i++) {
 			let close = this.#kagiValues[i][1];
@@ -37,6 +49,7 @@ class KagiCompany {
 	};
 
 	getMinValue = function () {
+		// Gets the minimum value that the stock achieved that period.
 		let minStockValue = 9999999999;
 		for (let i = 0; i < this.#kagiValues.length; i++) {
 			let close = this.#kagiValues[i][1];
@@ -46,6 +59,7 @@ class KagiCompany {
 	};
 
 	getCompanyDates = function () {
+		// Return the dates selected by the criteria of the Kagi chart.
 		let dates = [];
 		for (let i = 0; i < this.#kagiValues.length; i++) {
 			dates.push(this.#kagiValues[i][0]);
@@ -54,11 +68,10 @@ class KagiCompany {
 	};
 
 	makeKagi = function (data) {
-		/**
-		 * Description. Populates the kagiValues with dates and prices that break the current trend according to the currently established percentage.
+		/*
+		 * Description. Populates this.#kagiValues with dates and prices that
+		 * break the current trend according to the chosen percentage.
 		 */
-
-		self = this;
 
 		let series = this.getSeries(data);
 
@@ -68,10 +81,11 @@ class KagiCompany {
 		let kNextPos = 0;
 
 		// Adds the first and second value to calculate the trend later
-		// Adds the first value
+
+		// Adds the first value of the series to the Kagi selection.
 		this.#kagiValues.push(series[0]);
 
-		// Adds second value based on priceVar
+		// Adds second value based on priceVar.
 		for (let i = 0; i < series.length; i++) {
 			let l = this.#kagiValues.length;
 			if (
@@ -84,8 +98,9 @@ class KagiCompany {
 			}
 		}
 
-		// Adds subsequent values according to changes in trend.
-		// Compares each time to the previous two values
+		/* Adds subsequent values according to changes in trend.
+		 * Compares each time to the previous two values in the Kagi series.
+		 */
 		for (let i = kNextPos; i < series.length; i++) {
 			let l = this.#kagiValues.length;
 
@@ -115,24 +130,19 @@ class KagiCompany {
 	};
 
 	draw = function (layout, widthProportion, mapFunction) {
-		// Map function must be passed with .bind(this).
-
-		// Initiate variable to check the current trend
-		let trend;
+		/* Draws the Kagi chart. It changes the color of the chart according
+		 * to changes in trend and modifies the trend if needed.
+		 *Map function must be passed with .bind(this).
+		 */
 
 		strokeWeight(4);
 
 		// Draws the line for the first two values.
-		// Negative trend
-		if (this.#kagiValues[1][1] < this.#kagiValues[0][1]) {
-			stroke("red");
-			trend = false;
-		}
-		// Positive trend
-		else {
-			stroke("green");
-			trend = true;
-		}
+		// Initiate boolean variable to track the current trend
+		let trend = this.#kagiValues[1][1] < this.#kagiValues[0][1] ? false : true;
+
+		// Sets the color of the first two lines according to the initial trend.
+		trend ? stroke("green") : stroke("red");
 
 		// Draws the lines connecting the first two values
 		// Vertical line
@@ -176,14 +186,14 @@ class KagiCompany {
 						line(nextX, currentMapVal, currentX, currentMapVal);
 					}
 
-					// If current trend already positive, maintain
+					// If current trend already positive, maintain.
 					if (trend) {
 						stroke("green");
 						line(currentX, previousMapVal, currentX, refMapVal);
 						line(currentX, refMapVal, currentX, currentMapVal);
 					}
 
-					// If current trend negative, inverts trend
+					// If current trend negative, trend inverts.
 					else {
 						stroke("red");
 						line(currentX, previousMapVal, currentX, refMapVal);
@@ -192,7 +202,8 @@ class KagiCompany {
 						trend = !trend;
 					}
 				}
-				// If current value only larger than previous, maintains trend
+
+				// If current value only larger than previous, maintains trend.
 				else {
 					if (trend) {
 						stroke("green");
@@ -210,7 +221,8 @@ class KagiCompany {
 			}
 			// Checks if this is a valley
 			else {
-				// If current value only smaller than previous, maintains trend
+				// If current value smaller only than the previous one,
+				// maintains trend
 				if (currentVal > refVal) {
 					if (trend) {
 						stroke("green");
