@@ -1,62 +1,60 @@
-function KagiCompany(companyName) {
+class KagiCompany {
 
+    constructor(companyName) {
+        this.kagiValues = [];
+        this.companyName = companyName;
+    }
     // Initiate the array for the values that matter to the Kagi chart
-    this.kagiValues = [];
 
-    function getSeries(data) {
 
+    getSeries(data) {
         // Initiate variables for the series.
         let series = [];
 
         // Populates the series array with all information in the data
         for (let i = 0; i < data.getRowCount(); i++) {
             let dateString = data.getColumn(0)[i];
-            let close = float(data.getColumn(companyName)[i]);
+            let close = float(data.getColumn(this.companyName)[i]);
             series[i] = [dateString, close];
         };
-
         return series;
     };
 
-    this.getName = function () {
-        return companyName;
+    getName = function () {
+        return this.companyName;
     };
 
-    this.getKagiLength = function () {
-        let self = this;
-        return self.kagiValues.length;
+    getKagiLength = function () {
+        return this.kagiValues.length;
     };
 
-    this.getMaxValue = function () {
-        let self = this;
+    getMaxValue = function () {
         let maxStockValue = 0;
-        for (let i = 0; i < self.kagiValues.length; i++) {
-            let close = self.kagiValues[i][1];
+        for (let i = 0; i < this.kagiValues.length; i++) {
+            let close = this.kagiValues[i][1];
             maxStockValue = max(maxStockValue, close);
         };
         return (Math.ceil(maxStockValue / 10)) * 10;
     };
 
-    this.getMinValue = function () {
-        let self = this;
+    getMinValue = function () {
         let minStockValue = 9999999999;
-        for (let i = 0; i < self.kagiValues.length; i++) {
-            let close = self.kagiValues[i][1];
+        for (let i = 0; i < this.kagiValues.length; i++) {
+            let close = this.kagiValues[i][1];
             minStockValue = min(minStockValue, close);
         };
         return (Math.floor(minStockValue / 10)) * 10;
     };
 
-    this.getCompanyDates = function () {
-        let self = this;
+    getCompanyDates = function () {
         let dates = [];
-        for (let i = 0; i < self.kagiValues.length; i++) {
-            dates.push(self.kagiValues[i][0])
+        for (let i = 0; i < this.kagiValues.length; i++) {
+            dates.push(this.kagiValues[i][0])
         };
         return dates;
     }
 
-    this.makeKagi = function (data) {
+    makeKagi = function (data) {
         /**
          * Description. Populates the kagiValues with dates and prices that break the current trend according to the currently established percentage.
          */
@@ -64,7 +62,7 @@ function KagiCompany(companyName) {
 
         self = this;
 
-        let series = getSeries(data);
+        let series = this.getSeries(data);
 
         // Initiate the value for the minimum percentage change to alter
         // the line trend in the Kagi chart
@@ -74,16 +72,16 @@ function KagiCompany(companyName) {
 
         // Adds the first and second value to calculate the trend later
         // Adds the first value
-        self.kagiValues.push(series[0]);
+        this.kagiValues.push(series[0]);
 
         // Adds second value based on priceVar
         for (let i = 0; i < series.length; i++) {
-            let l = self.kagiValues.length
+            let l = this.kagiValues.length
             if (
-                series[i][1] > (self.kagiValues[l - 1][1] * priceVar) ||
-                series[i][1] < (self.kagiValues[l - 1][1] * (2 - priceVar))
+                series[i][1] > (this.kagiValues[l - 1][1] * priceVar) ||
+                series[i][1] < (this.kagiValues[l - 1][1] * (2 - priceVar))
             ) {
-                self.kagiValues.push(series[i]);
+                this.kagiValues.push(series[i]);
                 kNextPos = i + 1; // Adjust position for next loop
                 break
             }
@@ -93,36 +91,34 @@ function KagiCompany(companyName) {
         // Compares each time to the previous two values
         for (let i = kNextPos; i < series.length; i++) {
 
-            let l = self.kagiValues.length;
+            let l = this.kagiValues.length;
 
             // If the current trend is negative
-            if (self.kagiValues[l - 2][1] < self.kagiValues[l - 1][1]) {
+            if (this.kagiValues[l - 2][1] < this.kagiValues[l - 1][1]) {
                 // Replaces the current minimum value
-                if (self.kagiValues[l - 1][1] < series[i][1]) {
-                    self.kagiValues[l - 1] = series[i];
+                if (this.kagiValues[l - 1][1] < series[i][1]) {
+                    this.kagiValues[l - 1] = series[i];
                 }
                 // Adds new value if trend changes
-                else if (self.kagiValues[l - 1][1] * (2 - priceVar) > series[i][1]) {
-                    self.kagiValues.push(series[i]);
+                else if (this.kagiValues[l - 1][1] * (2 - priceVar) > series[i][1]) {
+                    this.kagiValues.push(series[i]);
                 }
             }
             // If the current trend is positive
             else {
                 // Replaces the current maximum value
-                if (self.kagiValues[l - 1][1] > series[i][1]) {
-                    self.kagiValues[l - 1] = series[i];
+                if (this.kagiValues[l - 1][1] > series[i][1]) {
+                    this.kagiValues[l - 1] = series[i];
                 }
                 // Adds new value if trend changes
-                else if (self.kagiValues[l - 1][1] * priceVar < series[i][1]) {
-                    self.kagiValues.push(series[i]);
+                else if (this.kagiValues[l - 1][1] * priceVar < series[i][1]) {
+                    this.kagiValues.push(series[i]);
                 }
             }
         }
     };
 
-    this.draw = function (layout, widthProportion, mapFunction) {
-        let self = this;
-
+    draw = function (layout, widthProportion, mapFunction) {
         // Map function must be passed with .bind(this).
 
         // Initiate variable to check the current trend
@@ -132,7 +128,7 @@ function KagiCompany(companyName) {
 
         // Draws the line for the first two values.
         // Negative trend
-        if (self.kagiValues[1][1] < self.kagiValues[0][1]) {
+        if (this.kagiValues[1][1] < this.kagiValues[0][1]) {
             stroke("red");
             trend = false;
         }
@@ -145,31 +141,31 @@ function KagiCompany(companyName) {
         // Draws the lines connecting the first two values
         // Vertical line
         line(layout.leftMargin,
-            mapFunction(self.kagiValues[0][1]),
+            mapFunction(this.kagiValues[0][1]),
             layout.leftMargin,
-            mapFunction(self.kagiValues[1][1]));
+            mapFunction(this.kagiValues[1][1]));
         // Horizontal line
         line(layout.leftMargin,
-            mapFunction(self.kagiValues[1][1]),
+            mapFunction(this.kagiValues[1][1]),
             layout.leftMargin + (widthProportion),
-            mapFunction(self.kagiValues[1][1]));
+            mapFunction(this.kagiValues[1][1]));
 
         // Logic to draw subsequent lines
-        for (let i = 2; i < self.kagiValues.length; i++) {
+        for (let i = 2; i < this.kagiValues.length; i++) {
 
             // Variables for the x axis of the current and the next dates
             let currentX = layout.leftMargin + (widthProportion * (i - 1));
             let nextX = layout.leftMargin + (widthProportion * i);
 
             // Maps the values of the current and previous stocks values
-            let currentMapVal = mapFunction(self.kagiValues[i][1]);
-            let previousMapVal = mapFunction(self.kagiValues[i - 1][1]);
-            let refMapVal = mapFunction(self.kagiValues[i - 2][1]);
+            let currentMapVal = mapFunction(this.kagiValues[i][1]);
+            let previousMapVal = mapFunction(this.kagiValues[i - 1][1]);
+            let refMapVal = mapFunction(this.kagiValues[i - 2][1]);
 
             // Iniate variables for the current and previous stock values
-            let currentVal = self.kagiValues[i][1];
-            let previousVal = self.kagiValues[i - 1][1];
-            let refVal = self.kagiValues[i - 2][1];
+            let currentVal = this.kagiValues[i][1];
+            let previousVal = this.kagiValues[i - 1][1];
+            let refVal = this.kagiValues[i - 2][1];
 
             // Checks if this is a peak
             if (currentVal > previousVal) {
@@ -178,7 +174,7 @@ function KagiCompany(companyName) {
                 if (currentVal > refVal) {
                     stroke("green");
                     // Does not draw the horizontal line for the last value
-                    if (i != self.kagiValues.length - 1) {
+                    if (i != this.kagiValues.length - 1) {
                         line(nextX, currentMapVal,
                             currentX, currentMapVal);
                     }
@@ -208,7 +204,7 @@ function KagiCompany(companyName) {
                     if (trend) {
                         stroke("green");
                         // Does not draw the horizontal line for the last value
-                        if (i != self.kagiValues.length - 1) {
+                        if (i != this.kagiValues.length - 1) {
                             line(nextX, currentMapVal,
                                 currentX, currentMapVal);
                         }
@@ -231,7 +227,7 @@ function KagiCompany(companyName) {
                     if (trend) {
                         stroke("green");
                         // Does not draw the horizontal line for the last value
-                        if (i != self.kagiValues.length - 1) {
+                        if (i != this.kagiValues.length - 1) {
                             line(nextX, currentMapVal,
                                 currentX, currentMapVal);
                         }
@@ -240,7 +236,7 @@ function KagiCompany(companyName) {
                     } else {
                         stroke("red");
                         // Does not draw the horizontal line for the last value
-                        if (i != self.kagiValues.length - 1) {
+                        if (i != this.kagiValues.length - 1) {
                             line(nextX, currentMapVal,
                                 currentX, currentMapVal);
                         }
@@ -252,7 +248,7 @@ function KagiCompany(companyName) {
                 else {
                     stroke("red")
                     // Does not draw the horizontal line for the last value
-                    if (i != self.kagiValues.length - 1) {
+                    if (i != this.kagiValues.length - 1) {
                         line(nextX, currentMapVal,
                             currentX, currentMapVal);
                     }
