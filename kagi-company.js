@@ -138,7 +138,7 @@ function KagiCompany(company) {
             trend = false;
         }
         // Positive trend
-        else if (self.kagiValues[1][1] > self.kagiValues[0][1]) {
+        else {
             stroke("green");
             trend = true;
         }
