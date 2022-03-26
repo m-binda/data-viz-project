@@ -149,7 +149,7 @@ function drawXAxisTickFullDate(layout, widthProportion, values) {
       push();
       translate(x, y);
       rotate(HALF_PI - 1.3);
-      text(values[i][0], 0, 0);
+      text(values[i], 0, 0);
       pop();
 
       // Draws the line connecting the date to the graph

@@ -48,7 +48,8 @@ function KagiStocks() {
             // Callback function to set the value
             // this.loaded to true.
             (table) => {
-                this.kagiChart = new KagiChart(table);
+                this.kagiChart = new KagiChart();
+                this.kagiChart.makeKagiChart(table);
                 self.loaded = true;
             });
     };
@@ -63,13 +64,13 @@ function KagiStocks() {
 
         // Create a select DOM element.
         this.select = createSelect();
-        this.select.position(width / 1.4, height);
+        this.select.position(width / 1.3, height);
 
         // Fill the options with all company names.
-        let companies = this.kagiChart.getCompanies();
+        let companies = this.kagiChart.getCompanyNames();
 
         // First entry is empty.
-        for (let i = 1; i < companies.length; i++) {
+        for (let i = 0; i < companies.length; i++) {
             this.select.option(companies[i]);
         };
     }
@@ -90,40 +91,35 @@ function KagiStocks() {
         // select item.
         let companyName = this.select.value();
 
-        this.kagiValues = this.kagiChart.makeKagi(companyName);
+        let kagiLength = this.kagiChart.getLength(companyName);
 
         // Since the Kagi chart does not care about proportional dates
         // in the x axis but only with changing trends, any value in the 
         // series must be equidistant in the graph.
         let widthProportion =
             (this.layout.rightMargin - this.layout.leftMargin) /
-            this.kagiValues.length;
+            kagiLength;
 
         // Draw the title above the plot
         this.drawTitle();
 
+        // Get dates to be drawn.
+        let dates = this.kagiChart.getDates(companyName);
+
         // Draw X axis ticks
-        drawXAxisTickFullDate(this.layout, widthProportion, this.kagiValues)
+        drawXAxisTickFullDate(this.layout, widthProportion, dates)
 
         // Calculate min and max stock values
-        this.minStockValue = 99999;
-        this.maxStockValue = 0;
-        for (let i = 0; i < this.kagiValues.length; i++) {
-            let close = this.kagiValues[i][1];
-            this.maxStockValue = max(this.maxStockValue, close);
-            this.minStockValue = min(this.minStockValue, close);
-        }
-
-        this.maxStockValue = (Math.ceil(this.maxStockValue / 10)) * 10
-        this.minStockValue = (Math.floor(this.minStockValue / 10)) * 10
+        this.maxStockValue = this.kagiChart.getMaxStockValue(companyName);
+        this.minStockValue = this.kagiChart.getMinStockValue(companyName);
 
         // Adds y ticks
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,
             this.layout, this.mapStockToHeight.bind(this));
 
-        this.kagiChart.draw(this.kagiValues, this.layout, widthProportion, this.mapStockToHeight.bind(this));
+        this.kagiChart.drawCompanies(companyName, this.layout, widthProportion, this.mapStockToHeight.bind(this));
 
-    }
+    };
 
 
     // Draws the title.
@@ -143,5 +139,5 @@ function KagiStocks() {
             this.maxStockValue,
             this.layout.bottomMargin,
             this.layout.topMargin);
-    }
+    };
 }
