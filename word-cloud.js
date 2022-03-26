@@ -1,115 +1,99 @@
-function WordCloud(_name) {
+class WordCloud {
+	constructor(_name) {
+		this.name = _name;
+		this.quantity = 1;
+		this.size = 0;
+		this.pos = createVector(0, 0);
+		this.w = 0;
+		this.h = 0;
+		this.wordColor = [random(0, 255), random(0, 255), random(0, 255)];
 
-    this.name = _name;
-    this.quantity = 1;
-    this.size = 0;
-    this.pos = createVector(0, 0);
-    this.w = 0;
-    this.h = 0;
-    this.wordColor = [random(0, 255), random(0, 255), random(0, 255)];
+		// Check if the word is on the screen
+		this.isOn = false;
 
-    // Check if the word is on the screen
-    this.isOn = false;
+		// Initiate variables for collision checks
+		this.x1 = 0;
+		this.x2 = 0;
+		this.y1 = 0;
+		this.y2 = 0;
 
-    // Initiate variables for collision checks
-    this.x1 = 0;
-    this.x2 = 0;
-    this.y1 = 0;
-    this.y2 = 0;
+		// Variable for changes in position when collision occurs
+		this.dir = createVector(0, 0);
+	}
 
-    // Variable for changes in position when collision occurs
-    this.dir = createVector(0, 0);
+	draw = function (_font) {
+		push();
+		noStroke();
+		textFont(_font);
+		fill(this.wordColor);
+		textAlign(CENTER, CENTER);
+		textSize(this.size);
+		text(this.name, this.pos.x, this.pos.y);
 
-    this.draw = function (_font) {
+		// Rect for collision tests
+		// noFill();
+		// stroke(0);
+		// strokeWeight(2);
+		// rect(this.x1, this.y1, this.w, this.h);
 
-        let self = this;
+		pop();
+	};
 
-        push();
-        noStroke();
-        textFont(_font);
-        fill(self.wordColor);
-        textAlign(CENTER, CENTER);
-        textSize(self.size);
-        text(self.name, self.pos.x, self.pos.y);
+	updateSize = function (minQty, maxQty, minText, maxText) {
+		this.size = map(this.quantity, minQty, maxQty, minText, maxText);
+	};
 
-        // Rect for collision tests
-        // noFill();
-        // stroke(0);
-        // strokeWeight(2);
-        // rect(self.x1, self.y1, self.w, self.h);
+	updateBounds = function (_font) {
+		let bounds = _font.textBounds(this.name, this.pos.x, this.pos.y, this.size);
 
-        pop();
-    }
+		// Variable to correct error in textBounds function.
+		// After multiples tests, I verified that this function does not
+		// return proper values, especially for smaller text sizes.
+		let bdErr = 5;
 
-    this.updateSize = function (minQty, maxQty, minText, maxText) {
-        let self = this;
+		this.w = bounds.w;
+		this.h = bounds.h + 2 * bdErr;
 
-        self.size = map(
-            self.quantity,
-            minQty, maxQty,
-            minText,
-            maxText
-        );
-    }
+		this.x1 = bounds.x;
+		this.x2 = this.x1 + this.w;
+		this.y1 = bounds.y + bdErr;
+		this.y2 = this.y1 + this.h;
+	};
 
-    this.updateBounds = function (_font) {
+	updatePos = function (_wordCloud, titleHeight) {
+		let v = p5.Vector.random2D();
 
-        let self = this;
-        let bounds = _font.textBounds(self.name, self.pos.x, self.pos.y, self.size);
+		this.dir.set(0, 0);
 
-        // Variable to correct error in textBounds function.
-        // After multiples tests, I verified that this function does not
-        // return proper values, especially for smaller text sizes.
-        let bdErr = 5;
+		for (var i = 0; i < _wordCloud.length; i++) {
+			if (_wordCloud[i].name != this.name) {
+				if (
+					this.x1 < _wordCloud[i].x2 &&
+					this.x2 > _wordCloud[i].x1 &&
+					this.y1 < _wordCloud[i].y2 &&
+					this.y2 > _wordCloud[i].y1
+				) {
+					this.dir.add(v);
+				}
+			}
+		}
 
-        self.w = bounds.w;
-        self.h = bounds.h + 2 * bdErr;
+		this.dir.normalize();
+		this.dir.mult(40);
+		this.pos.add(this.dir);
+		_wordCloud[0].pos.set(0, 0);
 
-        self.x1 = bounds.x;
-        self.x2 = self.x1 + self.w;
-        self.y1 = bounds.y + bdErr;
-        self.y2 = self.y1 + self.h;
-    }
+		if (
+			this.x1 < -width / 2 ||
+			this.x2 > width / 2 ||
+			this.y1 < -height / 2 + titleHeight + 20 ||
+			this.y2 > height / 2 - titleHeight
+		) {
+			this.pos.set(0, 0);
+		}
+	};
 
-    this.updatePos = function (_wordCloud, titleHeight) {
-
-        let self = this;
-        let v = p5.Vector.random2D();
-
-        self.dir.set(0, 0);
-
-        for (var i = 0; i < _wordCloud.length; i++) {
-            if (_wordCloud[i].name != self.name) {
-
-
-                if (
-                    self.x1 < _wordCloud[i].x2 &&
-                    self.x2 > _wordCloud[i].x1 &&
-                    self.y1 < _wordCloud[i].y2 &&
-                    self.y2 > _wordCloud[i].y1
-                ) {
-
-                    self.dir.add(v);
-                }
-            }
-        }
-
-        self.dir.normalize();
-        self.dir.mult(40);
-        self.pos.add(self.dir);
-        _wordCloud[0].pos.set(0, 0);
-
-        if (self.x1 < -width / 2 ||
-            self.x2 > width / 2 ||
-            self.y1 < -height / 2 + titleHeight + 20 ||
-            self.y2 > height / 2 - titleHeight
-        ) {
-            self.pos.set(0, 0);
-        }
-    }
-
-    this.resetPosition = function () {
-        let self = this;
-        self.pos.set(0, 0);
-    }
+	resetPosition = function () {
+		this.pos.set(0, 0);
+	};
 }
