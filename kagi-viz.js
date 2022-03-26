@@ -43,12 +43,13 @@ function KagiStocks() {
     // gallery when a visualisation is added.
     this.preload = function () {
         let self = this;
+        this.kagiChart = new KagiChart();
+
         loadTable(
             './data/kagi-stock/HistoricalData.csv', 'csv', 'header',
             // Callback function to set the value
             // this.loaded to true.
             (table) => {
-                this.kagiChart = new KagiChart();
                 this.kagiChart.makeKagiChart(table);
                 self.loaded = true;
             });
@@ -68,8 +69,6 @@ function KagiStocks() {
 
         // Fill the options with all company names.
         let companies = this.kagiChart.getCompanyNames();
-
-        // First entry is empty.
         for (let i = 0; i < companies.length; i++) {
             this.select.option(companies[i]);
         };
@@ -87,10 +86,10 @@ function KagiStocks() {
             return;
         }
 
-        // Get the value of the company we're interested in from the
-        // select item.
+        // Get the value of the company from the selected item.
         let companyName = this.select.value();
 
+        // Get length of the Kagi array
         let kagiLength = this.kagiChart.getLength(companyName);
 
         // Since the Kagi chart does not care about proportional dates
@@ -100,18 +99,18 @@ function KagiStocks() {
             (this.layout.rightMargin - this.layout.leftMargin) /
             kagiLength;
 
-        // Draw the title above the plot
-        this.drawTitle();
-
         // Get dates to be drawn.
         let dates = this.kagiChart.getDates(companyName);
-
-        // Draw X axis ticks
-        drawXAxisTickFullDate(this.layout, widthProportion, dates)
 
         // Calculate min and max stock values
         this.maxStockValue = this.kagiChart.getMaxStockValue(companyName);
         this.minStockValue = this.kagiChart.getMinStockValue(companyName);
+
+        // Draw the title above the plot
+        this.drawTitle();
+
+        // Draw X axis ticks
+        drawXAxisTickFullDate(this.layout, widthProportion, dates)
 
         // Adds y ticks
         drawYAxisTickLabels(this.minStockValue, this.maxStockValue,

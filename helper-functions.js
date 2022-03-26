@@ -158,7 +158,6 @@ function drawXAxisTickFullDate(layout, widthProportion, values) {
       line(x, y - 10, x, layout.bottomMargin)
     }
 
-
     if (layout.grid) {
       // Add grid line.
       stroke(220);

@@ -1,8 +1,7 @@
-function KagiCompany(company) {
+function KagiCompany(companyName) {
 
     // Initiate the array for the values that matter to the Kagi chart
     this.kagiValues = [];
-    let companyName = company;
 
     function getSeries(data) {
 
@@ -58,14 +57,14 @@ function KagiCompany(company) {
     }
 
     this.makeKagi = function (data) {
+        /**
+         * Description. Populates the kagiValues with dates and prices that break the current trend according to the currently established percentage.
+         */
+
 
         self = this;
 
         let series = getSeries(data);
-
-        // Populates the kagiValues with dates and prices that
-        // break the current trend according to the currently established 
-        // percentage.
 
         // Initiate the value for the minimum percentage change to alter
         // the line trend in the Kagi chart
